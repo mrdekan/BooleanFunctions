@@ -1,0 +1,17 @@
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\CDM_Skliarets_lab4.exe
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\CDM_Skliarets_lab4.deps.json
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\CDM_Skliarets_lab4.runtimeconfig.json
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\CDM_Skliarets_lab4.dll
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\CDM_Skliarets_lab4.pdb
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.csproj.AssemblyReference.cache
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.Form1.resources
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.csproj.GenerateResource.cache
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.GeneratedMSBuildEditorConfig.editorconfig
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.AssemblyInfoInputs.cache
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.AssemblyInfo.cs
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.csproj.CoreCompileInputs.cache
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.dll
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\refint\CDM_Skliarets_lab4.dll
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.pdb
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\CDM_Skliarets_lab4.genruntimeconfig.cache
+F:\code\C#\CDM_Skliarets_lab4\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\ref\CDM_Skliarets_lab4.dll

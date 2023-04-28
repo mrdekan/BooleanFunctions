@@ -1,0 +1,17 @@
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\BooleanFunctions.exe
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\BooleanFunctions.deps.json
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\BooleanFunctions.runtimeconfig.json
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\BooleanFunctions.dll
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\bin\Debug\net6.0-windows\BooleanFunctions.pdb
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.csproj.AssemblyReference.cache
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.csproj.GenerateResource.cache
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.GeneratedMSBuildEditorConfig.editorconfig
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.AssemblyInfoInputs.cache
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.AssemblyInfo.cs
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.csproj.CoreCompileInputs.cache
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.dll
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\refint\BooleanFunctions.dll
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.pdb
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.genruntimeconfig.cache
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\ref\BooleanFunctions.dll
+F:\code\C#\BooleanFunctions\CDM_Skliarets_lab4\obj\Debug\net6.0-windows\BooleanFunctions.Form1.resources
