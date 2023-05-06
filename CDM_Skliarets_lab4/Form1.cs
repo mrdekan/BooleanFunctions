@@ -30,6 +30,7 @@ namespace BooleanFunctions
 			List<string> variables = Variables();
 			List<List<string>> binTable = binaryTable(variables.Count - 1);
 			Dictionary<string, int> arguments = new Dictionary<string, int>();
+			Dictionary<int, string> implicants = new Dictionary<int, string>();
 			string strInput = ToCorrectInput();
 			input.Text = strInput.Replace('+', '∨').Replace('*', '∧');
 			table.Rows.Clear();
@@ -45,9 +46,18 @@ namespace BooleanFunctions
 					arr[j] = binTable.ElementAt(binTable.Count - j - 1).ElementAt(i);
 					arguments.Add(variables.ElementAt(j), int.Parse(arr[j]));
 				}
-				arr[arr.Length - 1] = booleanFunction.Calculate(strInput, arguments);
+				string res = booleanFunction.Calculate(strInput, arguments);
+				if (res == "1")
+				{
+					string impl = "";
+					for(int j = 0; j < arr.Length - 1; j++) impl += arr[j];
+					implicants.Add(i, impl);
+				}
+				arr[arr.Length - 1] = res;
 				PrintToTable(arr);
 			}
+			Cycle cycla = new Cycle();
+			cycla.SetFromImplicants(implicants);
 			stopwatch.Stop();
 			debug_label.Text += "\n" + stopwatch.Elapsed;
 		}
@@ -60,6 +70,18 @@ namespace BooleanFunctions
 			letters.Add("f()");
 			return letters;
 		}
+		public void PrintToTable(string[] arr)
+		{
+			int columns = 0;
+			while (table.Columns.Count < arr.Length)
+			{
+				table.Columns.Add("", "");
+				table.Columns[columns].Width = 24;
+				columns++;
+			}
+			table.Rows.Add(arr);
+		}
+		#region Working with input
 		private string ToCorrectInput()
 		{
 			string strInput = ParseInputString()
@@ -106,17 +128,6 @@ namespace BooleanFunctions
 			while (ACTIONS.Contains(strInput[0])) strInput = strInput.Remove(0, 1);
 			while (ACTIONS.Contains(strInput[strInput.Length - 1]) || strInput.EndsWith('!')) strInput = strInput.Remove(strInput.Length - 1, 1);
 			return strInput;
-		}
-		public void PrintToTable(string[] arr)
-		{
-			int columns = 0;
-			while (table.Columns.Count < arr.Length)
-			{
-				table.Columns.Add("", "");
-				table.Columns[columns].Width = 24;
-				columns++;
-			}
-			table.Rows.Add(arr);
 		}
 		private string ParseInputString()
 		{
@@ -169,6 +180,7 @@ namespace BooleanFunctions
 		{
 			table.ClearSelection();
 		}
+		#endregion
 		private List<List<string>> binaryTable(int variables)
 		{
 			List<List<string>> res = new List<List<string>>();
