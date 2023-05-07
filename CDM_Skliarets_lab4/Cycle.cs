@@ -22,6 +22,13 @@ namespace BooleanFunctions
 
 			return NextCycle;
 		}
+		private int CheckDifference(char[] a, char[] b)
+		{
+			int symbols = 0;
+			for (int i = 0; i < a.Length; i++)
+				if (a[i] != b[i]) symbols++;
+			return symbols;
+		}
 		public void SetFromImplicants(Dictionary<int, string> implicants)
 		{
 			int numOfElems = implicants.Count, section = 0, pos = 0, secpos = 0;
@@ -48,6 +55,14 @@ namespace BooleanFunctions
 					}
 				}
 				section++;
+			}
+		}
+		public void ToNextCycle()
+		{
+			int iterations = CycleList.Count-1;
+			for(int i = 0; i < iterations; i++)
+			{
+
 			}
 		}
 	}
