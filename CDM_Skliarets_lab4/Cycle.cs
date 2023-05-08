@@ -16,7 +16,7 @@ namespace BooleanFunctions
 	{
 		List<List<RowInSection>> CycleList = new List<List<RowInSection>>();
 		List<List<RowInSection>> NextCycleList = new List<List<RowInSection>>();
-		List<char[]> Xvalues = new List<char[]>();
+		List<string> Xvalues = new List<string>();
 		public bool LastCycle { get; private set; }
 		public Cycle GetNext()
 		{
@@ -44,9 +44,9 @@ namespace BooleanFunctions
 			{
 				for (int j = 0; j < CycleList[i].Count; j++)
 				{
-					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(CycleList[i][j].arr))
+					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(new string(CycleList[i][j].arr)))
 					{
-						Xvalues.Add(CycleList[i][j].arr);
+						Xvalues.Add(new string (CycleList[i][j].arr));
 						CycleList[i].Remove(CycleList[i][j]);
 						j--;
 						if (CycleList[i].Count == 0)
@@ -60,7 +60,7 @@ namespace BooleanFunctions
 						{
 							arr = CycleList[i][j].arr,
 							numbers = CycleList[i][j].numbers,
-							type = 'U'
+							type = 'X'
 						};
 					}
 					if (CycleList.Count == 0) return;
@@ -86,7 +86,7 @@ namespace BooleanFunctions
 						{
 							arr = implicants[implicant].ToCharArray(),
 							numbers = implicant.ToString(),
-							type = 'U'
+							type = 'X'
 						});
 						numOfElems--;
 						pos++;
@@ -126,34 +126,20 @@ namespace BooleanFunctions
 							{
 								arr = tempArr,
 								numbers = CycleList[i][j].numbers + "," + CycleList[i + 1][k].numbers,
-								type = 'V'
+								type = 'X'
 							});
-						}
-						else
-						{
-							if (CycleList[i][j].type == 'U')
-								CycleList[i][j] = new RowInSection
-								{
-									arr = CycleList[i][j].arr,
-									numbers = CycleList[i][j].numbers,
-									type = 'X'
-								};
-							if (CycleList[i + 1][k].type == 'U')
-								CycleList[i + 1][k] = new RowInSection
-								{
-									arr = CycleList[i + 1][k].arr,
-									numbers = CycleList[i + 1][k].numbers,
-									type = 'X'
-								};
 						}
 					}
 				}
 			}
 			AddXValues();
 			LastCycle = !ok;
-			if (LastCycle) return;
 			CycleList = NextCycleList;
 			NextCycleList = new List<List<RowInSection>>();
+		}
+		public string GetInString()
+		{
+			return string.Join('\n', Xvalues);
 		}
 	}
 }

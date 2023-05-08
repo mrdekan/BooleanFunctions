@@ -60,6 +60,7 @@ namespace BooleanFunctions
 			cycla.SetFromImplicants(implicants);
 			while(!cycla.LastCycle)
 				cycla.ToNextCycle();
+			debug_label.Text += "\n" + cycla.GetInString();
 			stopwatch.Stop();
 			debug_label.Text += "\n" + stopwatch.Elapsed;
 		}
