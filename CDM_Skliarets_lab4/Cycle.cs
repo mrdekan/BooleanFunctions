@@ -15,19 +15,57 @@ namespace BooleanFunctions
 	internal class Cycle
 	{
 		List<List<RowInSection>> CycleList = new List<List<RowInSection>>();
-		//List<List<RowInSection>> NextCycleList = new List<List<RowInSection>>();
+		List<List<RowInSection>> NextCycleList = new List<List<RowInSection>>();
+		List<char[]> Xvalues = new List<char[]>();
+		public bool LastCycle { get; private set; }
 		public Cycle GetNext()
 		{
 			Cycle NextCycle = new Cycle();
-
+			LastCycle = false;
 			return NextCycle;
 		}
-		private int CheckDifference(char[] a, char[] b)
+		private int CheckDifference(char[] a, char[] b, ref char[] res)
 		{
 			int symbols = 0;
 			for (int i = 0; i < a.Length; i++)
-				if (a[i] != b[i]) symbols++;
+			{
+				if (a[i] != b[i])
+				{
+					symbols++;
+					res[i] = '-';
+				}
+				else res[i] = a[i];
+			}
 			return symbols;
+		}
+		private void AddXValues()
+		{
+			for (int i = 0; i < CycleList.Count; i++)
+			{
+				for (int j = 0; j < CycleList[i].Count; j++)
+				{
+					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(CycleList[i][j].arr))
+					{
+						Xvalues.Add(CycleList[i][j].arr);
+						CycleList[i].Remove(CycleList[i][j]);
+						j--;
+						if (CycleList[i].Count == 0)
+						{
+							CycleList.Remove(CycleList[i]);
+						}
+					}
+					else
+					{
+						CycleList[i][j] = new RowInSection
+						{
+							arr = CycleList[i][j].arr,
+							numbers = CycleList[i][j].numbers,
+							type = 'U'
+						};
+					}
+					if (CycleList.Count == 0) return;
+				}
+			}
 		}
 		public void SetFromImplicants(Dictionary<int, string> implicants)
 		{
@@ -44,11 +82,11 @@ namespace BooleanFunctions
 							CycleList.Add(new List<RowInSection>());
 							secpos++;
 						}
-						CycleList.ElementAt(secpos-1).Add(new RowInSection
+						CycleList.ElementAt(secpos - 1).Add(new RowInSection
 						{
 							arr = implicants[implicant].ToCharArray(),
 							numbers = implicant.ToString(),
-							type = 'V'
+							type = 'U'
 						});
 						numOfElems--;
 						pos++;
@@ -59,11 +97,63 @@ namespace BooleanFunctions
 		}
 		public void ToNextCycle()
 		{
-			int iterations = CycleList.Count-1;
-			for(int i = 0; i < iterations; i++)
+			bool ok = false;
+			int iterations = CycleList.Count - 1;
+			for (int i = 0; i < iterations; i++)
 			{
-
+				NextCycleList.Add(new List<RowInSection>());
+				for (int j = 0; j < CycleList[i].Count; j++)
+				{
+					for (int k = 0; k < CycleList[i + 1].Count; k++)
+					{
+						char[] tempArr = new char[CycleList[i][j].arr.Length];
+						if (CheckDifference(CycleList[i][j].arr, CycleList[i + 1][k].arr, ref tempArr) == 1)
+						{
+							ok = true;
+							CycleList[i][j] = new RowInSection
+							{
+								arr = CycleList[i][j].arr,
+								numbers = CycleList[i][j].numbers,
+								type = 'V'
+							};
+							CycleList[i + 1][k] = new RowInSection
+							{
+								arr = CycleList[i + 1][k].arr,
+								numbers = CycleList[i + 1][k].numbers,
+								type = 'V'
+							};
+							NextCycleList.ElementAt(i).Add(new RowInSection
+							{
+								arr = tempArr,
+								numbers = CycleList[i][j].numbers + "," + CycleList[i + 1][k].numbers,
+								type = 'V'
+							});
+						}
+						else
+						{
+							if (CycleList[i][j].type == 'U')
+								CycleList[i][j] = new RowInSection
+								{
+									arr = CycleList[i][j].arr,
+									numbers = CycleList[i][j].numbers,
+									type = 'X'
+								};
+							if (CycleList[i + 1][k].type == 'U')
+								CycleList[i + 1][k] = new RowInSection
+								{
+									arr = CycleList[i + 1][k].arr,
+									numbers = CycleList[i + 1][k].numbers,
+									type = 'X'
+								};
+						}
+					}
+				}
 			}
+			AddXValues();
+			LastCycle = !ok;
+			if (LastCycle) return;
+			CycleList = NextCycleList;
+			NextCycleList = new List<List<RowInSection>>();
 		}
 	}
 }

@@ -58,6 +58,8 @@ namespace BooleanFunctions
 			}
 			Cycle cycla = new Cycle();
 			cycla.SetFromImplicants(implicants);
+			while(!cycla.LastCycle)
+				cycla.ToNextCycle();
 			stopwatch.Stop();
 			debug_label.Text += "\n" + stopwatch.Elapsed;
 		}
