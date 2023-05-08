@@ -6,66 +6,43 @@ using System.Threading.Tasks;
 
 namespace BooleanFunctions
 {
-	struct RowInSection
-	{
-		public char[] arr { get; set; }
-		public string numbers { get; set; }
-		public char type { get; set; }
-	}
 	internal class Cycle
 	{
-		List<List<RowInSection>> CycleList = new List<List<RowInSection>>();
-		List<List<RowInSection>> NextCycleList = new List<List<RowInSection>>();
-		List<string> Xvalues = new List<string>();
+		#region Variables
+		private List<List<RowInCyclesSection>> CycleList = new List<List<RowInCyclesSection>>();
+		private List<List<RowInCyclesSection>> NextCycleList = new List<List<RowInCyclesSection>>();
+		private List<string> Xvalues = new List<string>();
+		private List<string> Implicants = new List<string>();
 		public bool LastCycle { get; private set; }
+		#endregion
 		public Cycle GetNext()
 		{
 			Cycle NextCycle = new Cycle();
 			LastCycle = false;
 			return NextCycle;
 		}
-		private int CheckDifference(char[] a, char[] b, ref char[] res)
+		private int CheckDifference(string a, string b, ref string res)
 		{
 			int symbols = 0;
+			StringBuilder str = new StringBuilder();
 			for (int i = 0; i < a.Length; i++)
 			{
 				if (a[i] != b[i])
 				{
 					symbols++;
-					res[i] = '-';
+					str.Append('-');
 				}
-				else res[i] = a[i];
+				else str.Append(a[i]);
 			}
+			res = str.ToString();
 			return symbols;
 		}
 		private void AddXValues()
 		{
 			for (int i = 0; i < CycleList.Count; i++)
-			{
 				for (int j = 0; j < CycleList[i].Count; j++)
-				{
-					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(new string(CycleList[i][j].arr)))
-					{
-						Xvalues.Add(new string (CycleList[i][j].arr));
-						CycleList[i].Remove(CycleList[i][j]);
-						j--;
-						if (CycleList[i].Count == 0)
-						{
-							CycleList.Remove(CycleList[i]);
-						}
-					}
-					else
-					{
-						CycleList[i][j] = new RowInSection
-						{
-							arr = CycleList[i][j].arr,
-							numbers = CycleList[i][j].numbers,
-							type = 'X'
-						};
-					}
-					if (CycleList.Count == 0) return;
-				}
-			}
+					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(new string(CycleList[i][j].impl)))
+						Xvalues.Add(new string(CycleList[i][j].impl));
 		}
 		public void SetFromImplicants(Dictionary<int, string> implicants)
 		{
@@ -75,17 +52,18 @@ namespace BooleanFunctions
 				pos = 0;
 				foreach (int implicant in implicants.Keys)
 				{
+					if (!Implicants.Contains(implicants[implicant]))
+						Implicants.Add(implicants[implicant]);
 					if (implicants[implicant].Count(c => c == '1') == section)
 					{
 						if (pos == 0)
 						{
-							CycleList.Add(new List<RowInSection>());
+							CycleList.Add(new List<RowInCyclesSection>());
 							secpos++;
 						}
-						CycleList.ElementAt(secpos - 1).Add(new RowInSection
+						CycleList.ElementAt(secpos - 1).Add(new RowInCyclesSection
 						{
-							arr = implicants[implicant].ToCharArray(),
-							numbers = implicant.ToString(),
+							impl = implicants[implicant],
 							type = 'X'
 						});
 						numOfElems--;
@@ -95,39 +73,35 @@ namespace BooleanFunctions
 				section++;
 			}
 		}
+		private bool ContainsInList(List<RowInCyclesSection> list, string key)
+		{
+			for (int i = 0; i < list.Count; i++) if (list[i].impl == key) return true;
+			return false;
+		}
 		public void ToNextCycle()
 		{
 			bool ok = false;
+			string temp;
 			int iterations = CycleList.Count - 1;
 			for (int i = 0; i < iterations; i++)
 			{
-				NextCycleList.Add(new List<RowInSection>());
+				NextCycleList.Add(new List<RowInCyclesSection>());
 				for (int j = 0; j < CycleList[i].Count; j++)
 				{
 					for (int k = 0; k < CycleList[i + 1].Count; k++)
 					{
-						char[] tempArr = new char[CycleList[i][j].arr.Length];
-						if (CheckDifference(CycleList[i][j].arr, CycleList[i + 1][k].arr, ref tempArr) == 1)
+						temp = "";
+						if (CheckDifference(CycleList[i][j].impl, CycleList[i + 1][k].impl, ref temp) == 1)
 						{
 							ok = true;
-							CycleList[i][j] = new RowInSection
-							{
-								arr = CycleList[i][j].arr,
-								numbers = CycleList[i][j].numbers,
-								type = 'V'
-							};
-							CycleList[i + 1][k] = new RowInSection
-							{
-								arr = CycleList[i + 1][k].arr,
-								numbers = CycleList[i + 1][k].numbers,
-								type = 'V'
-							};
-							NextCycleList.ElementAt(i).Add(new RowInSection
-							{
-								arr = tempArr,
-								numbers = CycleList[i][j].numbers + "," + CycleList[i + 1][k].numbers,
-								type = 'X'
-							});
+							CycleList[i][j].type = 'V';
+							CycleList[i + 1][k].type = 'V';
+							if (!ContainsInList(NextCycleList.ElementAt(i), temp))
+								NextCycleList.ElementAt(i).Add(new RowInCyclesSection
+								{
+									impl = temp,
+									type = 'X'
+								});
 						}
 					}
 				}
@@ -135,11 +109,43 @@ namespace BooleanFunctions
 			AddXValues();
 			LastCycle = !ok;
 			CycleList = NextCycleList;
-			NextCycleList = new List<List<RowInSection>>();
+			NextCycleList = new List<List<RowInCyclesSection>>();
 		}
 		public string GetInString()
 		{
 			return string.Join('\n', Xvalues);
+		}
+		public bool[,] GetMatrix()
+		{
+			bool[,] matrix = new bool[Xvalues.Count, Implicants.Count];
+			for (int x = 0; x < Implicants.Count; x++)
+			{
+				for (int y = 0; y < Xvalues.Count; y++)
+				{
+					string temp = "";
+					matrix[y, x] = CheckDifference(Implicants[x], Xvalues[y], ref temp) == 1;
+				}
+			}
+			return matrix;
+		}
+		public List<string> GetCore()
+		{
+			bool[,] matrix = GetMatrix();
+			List<string> res = new List<string>();
+			for (int x = 0; x < matrix.GetLength(0); x++)
+			{
+				int count = 0, pos = 0;
+				for(int y = 0; y < matrix.GetLength(1); y++)
+				{
+					if (matrix[x, y])
+					{
+						count++;
+						pos = y;
+					}
+				}
+				if (count == 1) res.Add(Xvalues[pos]);
+			}
+			return res;
 		}
 	}
 }

@@ -58,11 +58,15 @@ namespace BooleanFunctions
 			}
 			Cycle cycla = new Cycle();
 			cycla.SetFromImplicants(implicants);
-			while(!cycla.LastCycle)
+			int cyclas=0;
+			while (!cycla.LastCycle) { 
 				cycla.ToNextCycle();
+				cyclas++;
+			}
+			string core = string.Join(',',cycla.GetCore());
 			debug_label.Text += "\n" + cycla.GetInString();
 			stopwatch.Stop();
-			debug_label.Text += "\n" + stopwatch.Elapsed;
+			debug_label.Text += "\n"+cyclas.ToString()+"\n" + core + "\n" + stopwatch.Elapsed;
 		}
 		Func<char, bool> Letter = c => ((int)c >= 97 && (int)c <= 122);
 		private List<string> Variables()
