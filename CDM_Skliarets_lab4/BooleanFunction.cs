@@ -55,5 +55,55 @@ namespace BooleanFunctions
 			}
 			return str.ToString();
 		}
+		public string GetMDNF(Dictionary<int, string> implicants)
+        {
+			Cycle cycle = new Cycle();
+			cycle.SetFromImplicants(implicants);
+			int cyclas = 0;
+			while (!cycle.LastCycle)
+			{
+				cycle.ToNextCycle();
+				cyclas++;
+			}
+			List<string> core = cycle.GetCore();
+			List<int> coreIndexes = new List<int>();
+			List<int> coreCover = new List<int>();
+			bool[,] matrix = cycle.GetMatrix();
+			foreach(string index in core)
+            {
+				int temp = cycle.Xvalues.IndexOf(index);
+				if (!coreIndexes.Contains(temp))
+				{
+					coreIndexes.Add(temp);
+					for(int i = 0; i < cycle.Implicants.Count; i++)
+						if (matrix[i, temp] && !coreCover.Contains(i)) coreCover.Add(i);
+				}
+            }
+			bool[,] newMatrix = new bool[cycle.Implicants.Count-coreCover.Count,cycle.Xvalues.Count-coreIndexes.Count];
+			
+			for (int y = 0, posY=0; y < matrix.GetLength(1); y++)
+			{
+				if (coreIndexes.Contains(y)) continue;
+				for (int x = 0, posX=0; x < matrix.GetLength(0); x++)
+				{
+                    if (!coreCover.Contains(x))
+                    {
+						newMatrix[posX, posY] = matrix[x, y];
+						posX++;
+                    }
+				}
+				posY++;
+			}
+			string res = "";
+			for (int y = 0; y < newMatrix.GetLength(1); y++)
+			{
+				for (int x = 0; x < newMatrix.GetLength(0); x++)
+				{
+					res += newMatrix[x, y] ? "* " : "_ ";
+				}
+				res += "\n";
+			}
+			return res+String.Join(',',core);
+        }
 	}
 }

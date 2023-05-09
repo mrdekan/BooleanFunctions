@@ -11,8 +11,8 @@ namespace BooleanFunctions
 		#region Variables
 		private List<List<RowInCyclesSection>> CycleList = new List<List<RowInCyclesSection>>();
 		private List<List<RowInCyclesSection>> NextCycleList = new List<List<RowInCyclesSection>>();
-		private List<string> Xvalues = new List<string>();
-		private List<string> Implicants = new List<string>();
+		public List<string> Xvalues = new List<string>();
+		public List<string> Implicants = new List<string>();
 		public bool LastCycle { get; private set; }
 		#endregion
 		public Cycle GetNext()
@@ -115,18 +115,36 @@ namespace BooleanFunctions
 		{
 			return string.Join('\n', Xvalues);
 		}
+		private bool ImplicantAndXvalue(string a, string b)
+        {
+			for(int i = 0; i < a.Length; i++)
+            {
+				if (a[i] == '-') continue;
+				if (a[i] != b[i]) return false;
+            }
+			return true;
+        }
 		public bool[,] GetMatrix()
 		{
-			bool[,] matrix = new bool[Xvalues.Count, Implicants.Count];
+			bool[,] matrix = new bool[Implicants.Count, Xvalues.Count];
 			for (int x = 0; x < Implicants.Count; x++)
-			{
 				for (int y = 0; y < Xvalues.Count; y++)
-				{
-					string temp = "";
-					matrix[y, x] = CheckDifference(Implicants[x], Xvalues[y], ref temp) == 1;
-				}
-			}
+					matrix[x, y] = ImplicantAndXvalue(Xvalues[y], Implicants[x]);
 			return matrix;
+		}
+		public string GetMatrixInString()
+        {
+			bool[,] matrix = GetMatrix();
+			string res = "";
+			for (int y = 0; y < matrix.GetLength(1); y++)
+			{
+				for (int x = 0; x < matrix.GetLength(0); x++)
+				{
+					res += matrix[x, y] ? '1' : '0';
+				}
+				res += "\n";
+			}
+			return res;
 		}
 		public List<string> GetCore()
 		{
@@ -143,7 +161,7 @@ namespace BooleanFunctions
 						pos = y;
 					}
 				}
-				if (count == 1) res.Add(Xvalues[pos]);
+				if (count == 1 && !res.Contains(Xvalues[pos])) res.Add(Xvalues[pos]);
 			}
 			return res;
 		}
