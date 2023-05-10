@@ -140,7 +140,7 @@ namespace BooleanFunctions
 						pos = y;
 					}
 				}
-				if (count == 1) res.Add(Xvalues[pos]);
+				if (count == 1 && !res.Contains(Xvalues[pos])) res.Add(Xvalues[pos]);
 			}
 			return res;
 		}

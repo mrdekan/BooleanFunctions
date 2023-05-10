@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Code\\C#\\BooleanFunctions\\CDM_Skliarets_lab4\\BooleanFunctions.csproj": {}
+    "D:\\Code\\C#\\BooleanFunctions\\BooleanFunctions\\BooleanFunctions.csproj": {}
   },
   "projects": {
-    "D:\\Code\\C#\\BooleanFunctions\\CDM_Skliarets_lab4\\BooleanFunctions.csproj": {
+    "D:\\Code\\C#\\BooleanFunctions\\BooleanFunctions\\BooleanFunctions.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Code\\C#\\BooleanFunctions\\CDM_Skliarets_lab4\\BooleanFunctions.csproj",
+        "projectUniqueName": "D:\\Code\\C#\\BooleanFunctions\\BooleanFunctions\\BooleanFunctions.csproj",
         "projectName": "BooleanFunctions",
-        "projectPath": "D:\\Code\\C#\\BooleanFunctions\\CDM_Skliarets_lab4\\BooleanFunctions.csproj",
+        "projectPath": "D:\\Code\\C#\\BooleanFunctions\\BooleanFunctions\\BooleanFunctions.csproj",
         "packagesPath": "C:\\Users\\Egor\\.nuget\\packages\\",
-        "outputPath": "D:\\Code\\C#\\BooleanFunctions\\CDM_Skliarets_lab4\\obj\\",
+        "outputPath": "D:\\Code\\C#\\BooleanFunctions\\BooleanFunctions\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Egor\\AppData\\Roaming\\NuGet\\NuGet.Config",
