@@ -10,6 +10,7 @@ namespace BooleanFunctions
     {
         #region Variables
         private List<string> variables = new List<string>();
+        private const int ASCII_LETTERS_START = 65;
         #endregion
         #region Calculation
         public string Calculate(string value, Dictionary<string, int> arguments)
@@ -64,23 +65,21 @@ namespace BooleanFunctions
             return str.ToString();
         }
         #endregion
+        //test from presentation
+        //!a!b!c!d+!a!b!cd+!a!bc!d+!a!bcd+!ab!cd+!abcd+a!b!c!d+a!bc!d+ab!c!d+a!bcd+ab!cd
         public string GetMDNF(Dictionary<int, string> implicants)
         {
             #region Calculating cycles
             Cycle cycle = new Cycle();
             cycle.SetFromImplicants(implicants);
-            int cyclas = 0;
             while (!cycle.LastCycle)
-            {
                 cycle.ToNextCycle();
-                cyclas++;
-            }
             List<string> core = cycle.GetCore();
-            List<int> coreIndexes = new List<int>();
-            List<int> coreCover = new List<int>();
             bool[,] matrix = cycle.GetMatrix();
             #endregion
             #region Finding indexes of core
+            List<int> coreIndexes = new List<int>();
+            List<int> coreCover = new List<int>();
             foreach (string index in core)
             {
                 int temp = cycle.Xvalues.IndexOf(index);
@@ -107,15 +106,6 @@ namespace BooleanFunctions
                 }
                 posY++;
             }
-            string res = "";
-            for (int y = 0; y < newMatrix.GetLength(1); y++)
-            {
-                for (int x = 0; x < newMatrix.GetLength(0); x++)
-                {
-                    res += newMatrix[x, y] ? "* " : "_ ";
-                }
-                res += "\n";
-            }
             #endregion
             #region Petrick's method
             if (newMatrix.GetLength(0) != 0)
@@ -126,7 +116,7 @@ namespace BooleanFunctions
                 {
                     BeforeMultiplying.Add(new List<string>());
                     for (int y = 0; y < newMatrix.GetLength(1); y++)
-                        if (newMatrix[x, y]) BeforeMultiplying[x].Add(((char)(y + 65)).ToString());
+                        if (newMatrix[x, y]) BeforeMultiplying[x].Add(((char)(y + ASCII_LETTERS_START)).ToString());
                 }
                 while (BeforeMultiplying.Count != 1)
                 {
@@ -146,21 +136,21 @@ namespace BooleanFunctions
                     BeforeMultiplying = AfterMultiplying;
                     AfterMultiplying = new List<List<string>>();
                 }
-                /*char[] min = BeforeMultiplying[0][0].ToCharArray();
-                foreach (string s in BeforeMultiplying[0]) if (s.Length < min.Length) min = s.ToCharArray();*/
-                char[] min = BeforeMultiplying[0].OrderBy(s => s.Length).FirstOrDefault().ToCharArray();
-                for (int i = 0; i < min.Length; i++) core.Add(cycle.Xvalues[(int)min[i] - 65]);
+                char[] min = BeforeMultiplying[0][0].ToCharArray();
+                foreach (string s in BeforeMultiplying[0]) 
+                    if (s.Length < min.Length) min = s.ToCharArray();
+                //char[] min = BeforeMultiplying[0].OrderBy(s => s.Length).FirstOrDefault().ToCharArray();
+                for (int i = 0; i < min.Length; i++)
+                    core.Add(cycle.Xvalues[(int)min[i] - ASCII_LETTERS_START]);
             }
             List<string> MDNF = new List<string>();
             foreach(var c in core)
             {
                 char[] temp = c.ToCharArray();
-                string tempRes = "";
+                StringBuilder tempRes = new StringBuilder();
                 for(int i = 0; i < temp.Length; i++)
-                {
-                    tempRes += (temp[i] == '-' ? "" : (temp[i] == '1' ? variables[i] : "!" + variables[i]));
-                }
-                MDNF.Add(tempRes);
+                    tempRes.Append(temp[i] == '-' ? "" : (temp[i] == '1' ? variables[i] : "!" + variables[i]));
+                MDNF.Add(tempRes.ToString());
             }
             #endregion
             return String.Join('+',MDNF);

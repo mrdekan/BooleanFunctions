@@ -25,6 +25,7 @@ namespace BooleanFunctions
 				if (a[i] != b[i])
 				{
 					symbols++;
+					if (symbols > 1) return symbols;
 					str.Append('-');
 				}
 				else str.Append(a[i]);
@@ -77,8 +78,7 @@ namespace BooleanFunctions
 		{
 			bool ok = false;
 			string temp;
-			int iterations = CycleList.Count - 1;
-			for (int i = 0; i < iterations; i++)
+			for (int i = 0; i < CycleList.Count - 1; i++)
 			{
 				NextCycleList.Add(new List<RowInCyclesSection>());
 				for (int j = 0; j < CycleList[i].Count; j++)
@@ -140,7 +140,7 @@ namespace BooleanFunctions
 						pos = y;
 					}
 				}
-				if (count == 1 && !res.Contains(Xvalues[pos])) res.Add(Xvalues[pos]);
+				if (count == 1) res.Add(Xvalues[pos]);
 			}
 			return res;
 		}
