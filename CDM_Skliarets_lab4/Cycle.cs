@@ -15,12 +15,7 @@ namespace BooleanFunctions
 		public List<string> Implicants = new List<string>();
 		public bool LastCycle { get; private set; }
 		#endregion
-		public Cycle GetNext()
-		{
-			Cycle NextCycle = new Cycle();
-			LastCycle = false;
-			return NextCycle;
-		}
+		#region McCluskey method
 		private int CheckDifference(string a, string b, ref string res)
 		{
 			int symbols = 0;
@@ -111,11 +106,9 @@ namespace BooleanFunctions
 			CycleList = NextCycleList;
 			NextCycleList = new List<List<RowInCyclesSection>>();
 		}
-		public string GetInString()
-		{
-			return string.Join('\n', Xvalues);
-		}
-		private bool ImplicantAndXvalue(string a, string b)
+        #endregion
+        #region After cycles
+        private bool ImplicantAndXvalue(string a, string b)
         {
 			for(int i = 0; i < a.Length; i++)
             {
@@ -131,20 +124,6 @@ namespace BooleanFunctions
 				for (int y = 0; y < Xvalues.Count; y++)
 					matrix[x, y] = ImplicantAndXvalue(Xvalues[y], Implicants[x]);
 			return matrix;
-		}
-		public string GetMatrixInString()
-        {
-			bool[,] matrix = GetMatrix();
-			string res = "";
-			for (int y = 0; y < matrix.GetLength(1); y++)
-			{
-				for (int x = 0; x < matrix.GetLength(0); x++)
-				{
-					res += matrix[x, y] ? '1' : '0';
-				}
-				res += "\n";
-			}
-			return res;
 		}
 		public List<string> GetCore()
 		{
@@ -165,5 +144,6 @@ namespace BooleanFunctions
 			}
 			return res;
 		}
-	}
+        #endregion
+    }
 }

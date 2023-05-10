@@ -109,6 +109,12 @@ namespace BooleanFunctions
 			while (strInput.Contains("()")) strInput = strInput.Replace("()", "");
 			for (int i = 0; i < strInput.Length - 1; i++)
 			{
+				if (strInput[i] == '(' && ACTIONS.Contains(strInput[i + 1]) || ACTIONS.Contains(strInput[i]) && strInput[i + 1] == ')' || strInput[i] == '!' && ACTIONS.Contains(strInput[i + 1]))
+				{
+					error_label.Text = "Incorrect value";
+					submit.Enabled = false;
+					return "error";
+				}
 				if (ACTIONS.Contains(strInput[i]) && ACTIONS.Contains(strInput[i + 1]))
 				{
 					if (strInput[i] == strInput[i + 1])

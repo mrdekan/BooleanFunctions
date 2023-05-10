@@ -8,8 +8,10 @@ namespace BooleanFunctions
 {
     internal class BooleanFunction
     {
-        //test string b+(d+c*b*(!a+!e)+a+d)
+        #region Variables
         private List<string> variables = new List<string>();
+        #endregion
+        #region Calculation
         public string Calculate(string value, Dictionary<string, int> arguments)
         {
             variables.Clear();
@@ -48,7 +50,7 @@ namespace BooleanFunctions
                     .Replace("0+0", "0");
             return value;
         }
-        public string cutHooks(string value, int pos)
+        private string cutHooks(string value, int pos)
         {
             StringBuilder str = new StringBuilder();
             int hooks = 1;
@@ -61,8 +63,10 @@ namespace BooleanFunctions
             }
             return str.ToString();
         }
+        #endregion
         public string GetMDNF(Dictionary<int, string> implicants)
         {
+            #region Calculating cycles
             Cycle cycle = new Cycle();
             cycle.SetFromImplicants(implicants);
             int cyclas = 0;
@@ -75,6 +79,8 @@ namespace BooleanFunctions
             List<int> coreIndexes = new List<int>();
             List<int> coreCover = new List<int>();
             bool[,] matrix = cycle.GetMatrix();
+            #endregion
+            #region Finding indexes of core
             foreach (string index in core)
             {
                 int temp = cycle.Xvalues.IndexOf(index);
@@ -85,6 +91,8 @@ namespace BooleanFunctions
                         if (matrix[i, temp] && !coreCover.Contains(i)) coreCover.Add(i);
                 }
             }
+            #endregion
+            #region Preparing matrix for Petrick's method
             bool[,] newMatrix = new bool[cycle.Implicants.Count - coreCover.Count, cycle.Xvalues.Count - coreIndexes.Count];
             for (int y = 0, posY = 0; y < matrix.GetLength(1); y++)
             {
@@ -108,7 +116,7 @@ namespace BooleanFunctions
                 }
                 res += "\n";
             }
-
+            #endregion
             #region Petrick's method
             if (newMatrix.GetLength(0) != 0)
             {
