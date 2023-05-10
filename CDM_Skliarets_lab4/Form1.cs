@@ -38,6 +38,8 @@ namespace BooleanFunctions
 			table.Refresh();
 			PrintToTable(variables.ToArray());
 			string[] arr = new string[variables.Count()];
+			bool onlyOne = true;
+			bool onlyZero = true;
 			for (int i = 0; i < binTable.ElementAt(0).Count; i++)
 			{
 				arguments.Clear();
@@ -50,16 +52,20 @@ namespace BooleanFunctions
 				if (res == "1")
 				{
 					string impl = "";
-					for(int j = 0; j < arr.Length - 1; j++) impl += arr[j];
+					for (int j = 0; j < arr.Length - 1; j++) impl += arr[j];
 					implicants.Add(i, impl);
+					onlyZero = false;
 				}
+				else onlyOne = false;
 				arr[arr.Length - 1] = res;
 				PrintToTable(arr);
 			}
-			string core = booleanFunction.GetMDNF(implicants);
-			//debug_label.Text += "\n" + cycla.GetInString();
+			string mdnf;
+			if (onlyOne) mdnf = "1";
+			else if (onlyZero) mdnf = "0";
+			else mdnf = booleanFunction.GetMDNF(implicants);
 			stopwatch.Stop();
-			debug_label.Text += "\n" + core + "\n" + stopwatch.Elapsed;
+			debug_label.Text += "\n" + mdnf + "\n" + stopwatch.Elapsed;
 		}
 		Func<char, bool> Letter = c => ((int)c >= 97 && (int)c <= 122);
 		private List<string> Variables()
