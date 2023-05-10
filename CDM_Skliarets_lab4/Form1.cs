@@ -40,6 +40,7 @@ namespace BooleanFunctions
 			string[] arr = new string[variables.Count()];
 			bool onlyOne = true;
 			bool onlyZero = true;
+			List<string> results = new List<string>();
 			for (int i = 0; i < binTable.ElementAt(0).Count; i++)
 			{
 				arguments.Clear();
@@ -49,6 +50,7 @@ namespace BooleanFunctions
 					arguments.Add(variables.ElementAt(j), int.Parse(arr[j]));
 				}
 				string res = booleanFunction.Calculate(strInput, arguments);
+				results.Add(res);
 				if (res == "1")
 				{
 					string impl = "";
