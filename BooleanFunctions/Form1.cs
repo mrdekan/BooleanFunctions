@@ -38,9 +38,8 @@ namespace BooleanFunctions
 			table.Refresh();
 			PrintToTable(variables.ToArray());
 			string[] arr = new string[variables.Count()];
-			bool onlyOne = true;
-			bool onlyZero = true;
 			List<string> results = new List<string>();
+			
 			for (int i = 0; i < binTable.ElementAt(0).Count; i++)
 			{
 				arguments.Clear();
@@ -56,18 +55,33 @@ namespace BooleanFunctions
 					string impl = "";
 					for (int j = 0; j < arr.Length - 1; j++) impl += arr[j];
 					implicants.Add(i, impl);
-					onlyZero = false;
 				}
-				else onlyOne = false;
 				arr[arr.Length - 1] = res;
 				PrintToTable(arr);
 			}
+			string[] dual = new string[results.Count];
+			results.CopyTo(dual);
+			for(int i = 0; i < dual.Length; i++)
+            {
+				if (dual[i] == "0") dual[i] = "-1";
+				else if (dual[i] == "1") dual[i] = "0";
+            }
+			for (int i = 0; i < dual.Length; i++)
+				if (dual[i] == "-1") dual[i] = "1";
+			//dual = dual.Reverse();
+			Array.Reverse(dual);
 			string mdnf;
-			if (onlyOne) mdnf = "1";
-			else if (onlyZero) mdnf = "0";
+			if (!results.Contains("0")) mdnf = "1";
+			else if (!results.Contains("1")) mdnf = "0";
 			else mdnf = booleanFunction.GetMDNF(implicants);
 			stopwatch.Stop();
-			debug_label.Text += "\n" + mdnf + "\n" + stopwatch.Elapsed;
+			other_results.Text = "";
+			other_results.Text += $"Done in {stopwatch.Elapsed}\r\n";
+			variables.RemoveAt(variables.Count - 1);
+			other_results.Text += $"MDNF: f({String.Join(',', variables)})={mdnf}\r\n";
+			other_results.Text += (results[results.Count-1] == "1" ? "The function stores 1." : "The function does not store 1.")+"\r\n";
+			other_results.Text += (results[0] == "0" ? "The function stores 0." : "The function does not store 0.") + "\r\n";
+			other_results.Text += (results.SequenceEqual(dual) ? "The function is self-dual." : "The function is not self-dual.") + "\r\n";
 		}
 		Func<char, bool> Letter = c => ((int)c >= 97 && (int)c <= 122);
 		private List<string> Variables()

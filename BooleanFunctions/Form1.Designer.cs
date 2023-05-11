@@ -35,8 +35,8 @@
             this.conjunction = new System.Windows.Forms.Button();
             this.disjunction = new System.Windows.Forms.Button();
             this.info = new System.Windows.Forms.Label();
-            this.debug_label = new System.Windows.Forms.Label();
             this.random = new System.Windows.Forms.Button();
+            this.other_results = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.table)).BeginInit();
             this.SuspendLayout();
             // 
@@ -140,15 +140,6 @@
             this.info.TabIndex = 23;
             this.info.Text = "*, &  = ∧\r\n+, | = ∨";
             // 
-            // debug_label
-            // 
-            this.debug_label.AutoSize = true;
-            this.debug_label.Location = new System.Drawing.Point(557, 164);
-            this.debug_label.Name = "debug_label";
-            this.debug_label.Size = new System.Drawing.Size(54, 20);
-            this.debug_label.TabIndex = 24;
-            this.debug_label.Text = "Debug";
-            // 
             // random
             // 
             this.random.BackColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -165,13 +156,23 @@
             this.random.UseVisualStyleBackColor = false;
             this.random.Click += new System.EventHandler(this.random_Click);
             // 
+            // other_results
+            // 
+            this.other_results.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.other_results.Location = new System.Drawing.Point(525, 137);
+            this.other_results.Multiline = true;
+            this.other_results.Name = "other_results";
+            this.other_results.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.other_results.Size = new System.Drawing.Size(479, 597);
+            this.other_results.TabIndex = 26;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1250, 751);
+            this.ClientSize = new System.Drawing.Size(1011, 745);
+            this.Controls.Add(this.other_results);
             this.Controls.Add(this.random);
-            this.Controls.Add(this.debug_label);
             this.Controls.Add(this.info);
             this.Controls.Add(this.disjunction);
             this.Controls.Add(this.conjunction);
@@ -197,7 +198,7 @@
 		private Button conjunction;
 		private Button disjunction;
 		private Label info;
-		private Label debug_label;
 		private Button random;
-	}
+        private TextBox other_results;
+    }
 }
