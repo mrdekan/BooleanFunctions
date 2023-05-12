@@ -1,22 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BooleanFunctions
 {
     public partial class Form1 : Form
     {
+        #region Constants
         private const string ACTIONS = "∨∧*+|&";
         private const int MAX_RAND_ACTIONS = 15;
         private const int MAX_RAND_ARGS = 7;
         private const int MIN_RAND_ARGS = 3;
-        private int var_length = 2;
-        private int var_length_pow = 1;
+        #endregion
         private BooleanFunction booleanFunction = new BooleanFunction();
         public Form1()
         {
@@ -35,6 +30,7 @@ namespace BooleanFunctions
             Dictionary<string, int> arguments = new Dictionary<string, int>();
             Dictionary<int, string> implicants = new Dictionary<int, string>();
             string strInput = ToCorrectInput();
+            if (strInput == "error") return;
             input.Text = strInput.Replace('+', '∨').Replace('*', '∧');
             table.Rows.Clear();
             table.Columns.Clear();
@@ -56,22 +52,22 @@ namespace BooleanFunctions
                 results.Add(int.Parse(res));
                 if (res == "1")
                 {
-                    string impl = "";
-                    for (int j = 0; j < arr.Length - 1; j++) impl += arr[j];
-                    implicants.Add(i, impl);
-                    pdnf.Add(ImplicantsToString(arguments, '*'));
+                    StringBuilder impl = new StringBuilder();
+                    for (int j = 0; j < arr.Length - 1; j++) impl.Append(arr[j]);
+                    implicants.Add(i, impl.ToString());
+                    pdnf.Add(ImplicantsToString(arguments, 0));
                 }
                 else
-                    pcnf.Add(ImplicantsToString(arguments, '+'));
+                    pcnf.Add(ImplicantsToString(arguments, 1));
                 arr[arr.Length - 1] = res;
                 PrintToTable(arr);
             }
-            string mdnf;
-            if (!results.Contains(0)) mdnf = "1";
-            else if (!results.Contains(1)) mdnf = "0";
-            else mdnf = booleanFunction.GetMDNF(implicants);
             other_results.Text = "";
             variables.RemoveAt(variables.Count - 1);
+            string mdnf;
+            if (!results.Contains(0)) mdnf = "1";
+            else if (!results.Contains(1)) mdnf = "doesn't exist";
+            else mdnf = booleanFunction.GetMDNF(implicants);
             string ZhegalkinPolynomial;
             if (!results.Contains(0)) ZhegalkinPolynomial = "1";
             else if (!results.Contains(1)) ZhegalkinPolynomial = "0";
@@ -87,19 +83,12 @@ namespace BooleanFunctions
             other_results.Text += $"Done in {stopwatch.Elapsed}\r\n";
         }
         Func<char, bool> Letter = c => ((int)c >= 97 && (int)c <= 122);
-        private string ImplicantsToString(Dictionary<string, int> arguments, char mode)
+        private string ImplicantsToString(Dictionary<string, int> arguments, int mode)
         {
             StringBuilder res = new StringBuilder();
-            if (mode == '*')
                 for (int i = 0; i < arguments.Keys.Count; i++)
-                    res.Append(arguments.ElementAt(i).Value == 0 ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i));
-            else
-            {
-                res.Append("(");
-                for (int i = 0; i < arguments.Keys.Count; i++)
-                    res.Append((i == 0 ? "" : "+") + (arguments.ElementAt(i).Value == 1 ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i)));
-                res.Append(")");
-            }
+                    res.Append(((i == 0 || mode != 1) ? "" : "+") + (arguments.ElementAt(i).Value == mode ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i)));
+            if (mode == 1) return $"({res.ToString()})";
             return res.ToString();
         }
         private List<string> Variables(string str)
@@ -129,17 +118,12 @@ namespace BooleanFunctions
                 .Replace('∨', '+')
                 .Replace('&', '*')
                 .Replace('|', '+');
-            int[] addHooks = CheckHooks(strInput).Split('_').Select(num => Convert.ToInt32(num)).ToArray();
-            while (addHooks[0] > 0)
-            {
+            int templesBefore = 0, templesAfter = 0;
+            CheckTemples(strInput, ref templesBefore, ref templesAfter);
+            for(;templesBefore > 0; templesBefore--)
                 strInput = "(" + strInput;
-                addHooks[0]--;
-            }
-            while (addHooks[1] > 0)
-            {
+            for(;templesAfter > 0; templesAfter--)
                 strInput += ")";
-                addHooks[1]--;
-            }
             while (strInput.Contains("()")) strInput = strInput.Replace("()", "");
             for (int i = 0; i < strInput.Length - 1; i++)
             {
@@ -179,16 +163,14 @@ namespace BooleanFunctions
         {
             return input.Text.Replace("()", "").Trim(' ').ToLower();
         }
-        private string CheckHooks(string s)
+        private void CheckTemples(string s, ref int before, ref int after)
         {
-            int before = 0, hooks = 0;
             for (int i = 0; i < s.Length; i++)
             {
-                if (s[i] == '(') hooks++;
-                else if (s[i] == ')' && hooks <= 0) before++;
-                else if (s[i] == ')') hooks--;
+                if (s[i] == '(') after++;
+                else if (s[i] == ')' && after <= 0) before++;
+                else if (s[i] == ')') after--;
             }
-            return before.ToString() + "_" + hooks.ToString();
         }
         private void input_TextChanged(object sender, EventArgs e)
         {
@@ -250,14 +232,9 @@ namespace BooleanFunctions
             StringBuilder str = new StringBuilder();
             Random random = new Random();
             char[] arr = new char[random.Next(MIN_RAND_ARGS, MAX_RAND_ARGS)];
-            char letter = 'a';
             string actions = "∨∧";
             int hooks = 0;
-            for (int i = 0; i < arr.Length; i++)
-            {
-                arr[i] = letter;
-                letter++;
-            }
+            for (int i = 0; i < arr.Length; i++) arr[i] = (char)(i+97);
             if (random.Next(4) == 0) str.Append('!');
             str.Append(arr[random.Next(arr.Length)]);
             int actionsNumber = random.Next(2, MAX_RAND_ACTIONS);
@@ -279,19 +256,14 @@ namespace BooleanFunctions
                     hooks--;
                 }
             }
-            while (hooks > 0)
-            {
+            for(; hooks > 0; hooks--)
                 str.Append(')');
-                hooks--;
-            }
             input.Text = str.ToString();
         }
-
         private void input_binary_KeyDown(object sender, KeyEventArgs e)
         {
             e.SuppressKeyPress = !(e.KeyValue == 48 || e.KeyValue == 49 || e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back);
         }
-
         private void input_binary_TextChanged(object sender, EventArgs e)
         {
             enter_binary.Enabled = input_binary.Text != "";
@@ -307,27 +279,23 @@ namespace BooleanFunctions
             int length = (int)Math.Pow(2, int.Parse(var_binary_label.Text));
             while (str.Length < length)
                 str.Append("0");
-            char[] var_arr = new char[int.Parse(var_binary_label.Text)];
-            List<List<string>> binTable = binaryTable(var_arr.Length);
-            for (int i = 0; i < var_arr.Length; i++)
-                var_arr[i] = (char)(i + 97);
+            char[] varArr = new char[int.Parse(var_binary_label.Text)];
+            List<List<string>> binTable = binaryTable(varArr.Length);
+            for (int i = 0; i < varArr.Length; i++)
+                varArr[i] = (char)(i + 97);
             char[] implicants = str.ToString().ToCharArray();
             List<string> res = new List<string>();
-
             Dictionary<string, int> arguments = new Dictionary<string, int>();
             for (int i = 0; i < binTable.ElementAt(0).Count; i++)
             {
                 if (implicants[i] == '0') continue;
                 arguments.Clear();
-                for (int j = 0; j < var_arr.Length; j++)
-                {
-                    arguments.Add(var_arr[j].ToString(), int.Parse(binTable.ElementAt(binTable.Count - j - 1).ElementAt(i)));
-                }
-                res.Add(ImplicantsToString(arguments, '*'));
+                for (int j = 0; j < varArr.Length; j++)
+                    arguments.Add(varArr[j].ToString(), int.Parse(binTable.ElementAt(binTable.Count - j - 1).ElementAt(i)));
+                res.Add(ImplicantsToString(arguments, 0));
             }
             return String.Join('+', res);
         }
-
         private void enter_binary_Click(object sender, EventArgs e)
         {
             if(input_binary.Text != "") input.Text = getFromBinary();

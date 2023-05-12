@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace BooleanFunctions
 {
@@ -12,7 +8,7 @@ namespace BooleanFunctions
         private List<string> variables = new List<string>();
         private const int ASCII_LETTERS_START = 65;
         #endregion
-        #region Calculation
+        #region Main calculation
         public string Calculate(string value, Dictionary<string, int> arguments)
         {
             variables.Clear();
@@ -23,7 +19,7 @@ namespace BooleanFunctions
             while (value.Contains('('))
             {
                 int pos = value.IndexOf('(');
-                string temp = cutHooks(value, pos);
+                string temp = cutTemples(value, pos);
                 value = value.Remove(pos, temp.Length + 2).Insert(pos, Calculate(temp, arguments));
             }
             char[] arr = value.ToCharArray();
@@ -51,7 +47,7 @@ namespace BooleanFunctions
                     .Replace("0+0", "0");
             return value;
         }
-        private string cutHooks(string value, int pos)
+        private string cutTemples(string value, int pos)
         {
             StringBuilder str = new StringBuilder();
             int hooks = 1;
@@ -159,10 +155,7 @@ namespace BooleanFunctions
         {
             int[] dual = new int[implicants.Count];
             implicants.CopyTo(dual);
-            for (int i = 0; i < dual.Length; i++) { 
-                dual[i]--;
-                dual[i] *= -1;
-            }
+            for (int i = 0; i < dual.Length; i++) dual[i] = (dual[i]-1)*-1;
             Array.Reverse(dual);
             return implicants.SequenceEqual(dual);
         }
@@ -186,9 +179,8 @@ namespace BooleanFunctions
                 {
                     StringBuilder tempStr = new StringBuilder();
                     for(int j = binTable.Count-1; j >= 0; j--)
-                    {
                         if (binTable[j][i] != "0") tempStr.Append(variables[binTable.Count - j - 1]);
-                    }
+                    if (tempStr.Length == 0) tempStr.Append("1"); //for 000..0 iteration
                     res.Add(tempStr.ToString());
                 }
             }
