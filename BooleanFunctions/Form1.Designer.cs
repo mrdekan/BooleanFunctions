@@ -37,6 +37,9 @@
             this.info = new System.Windows.Forms.Label();
             this.random = new System.Windows.Forms.Button();
             this.other_results = new System.Windows.Forms.TextBox();
+            this.input_binary = new System.Windows.Forms.TextBox();
+            this.var_binary_label = new System.Windows.Forms.Label();
+            this.enter_binary = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.table)).BeginInit();
             this.SuspendLayout();
             // 
@@ -163,15 +166,56 @@
             this.other_results.Multiline = true;
             this.other_results.Name = "other_results";
             this.other_results.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.other_results.Size = new System.Drawing.Size(479, 597);
+            this.other_results.Size = new System.Drawing.Size(823, 597);
             this.other_results.TabIndex = 26;
             this.other_results.WordWrap = false;
+            // 
+            // input_binary
+            // 
+            this.input_binary.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.input_binary.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.input_binary.Location = new System.Drawing.Point(743, 19);
+            this.input_binary.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.input_binary.Name = "input_binary";
+            this.input_binary.Size = new System.Drawing.Size(504, 36);
+            this.input_binary.TabIndex = 27;
+            this.input_binary.TextChanged += new System.EventHandler(this.input_binary_TextChanged);
+            this.input_binary.KeyDown += new System.Windows.Forms.KeyEventHandler(this.input_binary_KeyDown);
+            // 
+            // var_binary_label
+            // 
+            this.var_binary_label.AutoSize = true;
+            this.var_binary_label.Location = new System.Drawing.Point(743, 59);
+            this.var_binary_label.Name = "var_binary_label";
+            this.var_binary_label.Size = new System.Drawing.Size(17, 20);
+            this.var_binary_label.TabIndex = 28;
+            this.var_binary_label.Text = "1";
+            // 
+            // enter_binary
+            // 
+            this.enter_binary.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.enter_binary.Enabled = false;
+            this.enter_binary.FlatAppearance.BorderSize = 0;
+            this.enter_binary.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.enter_binary.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.enter_binary.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.enter_binary.Location = new System.Drawing.Point(1253, 16);
+            this.enter_binary.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.enter_binary.Name = "enter_binary";
+            this.enter_binary.Size = new System.Drawing.Size(95, 39);
+            this.enter_binary.TabIndex = 29;
+            this.enter_binary.Text = "Enter";
+            this.enter_binary.UseVisualStyleBackColor = false;
+            this.enter_binary.Click += new System.EventHandler(this.enter_binary_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1011, 745);
+            this.ClientSize = new System.Drawing.Size(1390, 745);
+            this.Controls.Add(this.enter_binary);
+            this.Controls.Add(this.var_binary_label);
+            this.Controls.Add(this.input_binary);
             this.Controls.Add(this.other_results);
             this.Controls.Add(this.random);
             this.Controls.Add(this.info);
@@ -201,5 +245,8 @@
 		private Label info;
 		private Button random;
         private TextBox other_results;
+        private TextBox input_binary;
+        private Label var_binary_label;
+        private Button enter_binary;
     }
 }

@@ -155,5 +155,44 @@ namespace BooleanFunctions
             #endregion
             return String.Join('+',MDNF);
         }
+        public bool IsSelfDual(List<int> implicants)
+        {
+            int[] dual = new int[implicants.Count];
+            implicants.CopyTo(dual);
+            for (int i = 0; i < dual.Length; i++) { 
+                dual[i]--;
+                dual[i] *= -1;
+            }
+            Array.Reverse(dual);
+            return implicants.SequenceEqual(dual);
+        }
+        public string GetZhegalkinPolynomial(List<int> implicants, List<string> variables, List<List<string>> binTable)
+        {
+            List<int> temp = new List<int>();
+            List<int> leftElemsInTriangle = new List<int>();
+            leftElemsInTriangle.Add(implicants[0]);
+            while (implicants.Count > 1)
+            {
+                for (int i = 0; i < implicants.Count - 1; i++)
+                    temp.Add((implicants[i] + implicants[i + 1]) % 2);
+                implicants = temp;
+                temp = new List<int>();
+                leftElemsInTriangle.Add(implicants[0]);
+            }
+            List<string> res = new List<string>();
+            for(int i = 0; i < leftElemsInTriangle.Count; i++)
+            {
+                if (leftElemsInTriangle[i] != 0)
+                {
+                    StringBuilder tempStr = new StringBuilder();
+                    for(int j = binTable.Count-1; j >= 0; j--)
+                    {
+                        if (binTable[j][i] != "0") tempStr.Append(variables[binTable.Count - j - 1]);
+                    }
+                    res.Add(tempStr.ToString());
+                }
+            }
+            return String.Join('⨁', res);
+        }
     }
 }

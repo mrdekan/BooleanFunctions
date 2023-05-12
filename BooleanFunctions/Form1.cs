@@ -15,19 +15,22 @@ namespace BooleanFunctions
         private const int MAX_RAND_ACTIONS = 15;
         private const int MAX_RAND_ARGS = 7;
         private const int MIN_RAND_ARGS = 3;
+        private int var_length = 2;
+        private int var_length_pow = 1;
         private BooleanFunction booleanFunction = new BooleanFunction();
         public Form1()
         {
             InitializeComponent();
             table.RowCount = 0;
             info.UseMnemonic = false;
+            other_results.ReadOnly = true;
         }
         //heavy test b∧(!d∧a∨d)∧a∧b∨f∨d∧t∧(g∨r)∨!e∨!o∧(f∨s∧!d)∨g∧c∨!c∧d∨z∨x∨y∧(!z∨!x)∨u
         private void submit_Click(object sender, EventArgs e)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            List<string> variables = Variables();
+            List<string> variables = Variables(ParseInputString());
             List<List<string>> binTable = binaryTable(variables.Count - 1);
             Dictionary<string, int> arguments = new Dictionary<string, int>();
             Dictionary<int, string> implicants = new Dictionary<int, string>();
@@ -38,7 +41,7 @@ namespace BooleanFunctions
             table.Refresh();
             PrintToTable(variables.ToArray());
             string[] arr = new string[variables.Count()];
-            List<string> results = new List<string>();
+            List<int> results = new List<int>();
             List<string> pdnf = new List<string>();
             List<string> pcnf = new List<string>();
             for (int i = 0; i < binTable.ElementAt(0).Count; i++)
@@ -50,41 +53,36 @@ namespace BooleanFunctions
                     arguments.Add(variables.ElementAt(j), int.Parse(arr[j]));
                 }
                 string res = booleanFunction.Calculate(strInput, arguments);
-                results.Add(res);
+                results.Add(int.Parse(res));
                 if (res == "1")
                 {
                     string impl = "";
                     for (int j = 0; j < arr.Length - 1; j++) impl += arr[j];
                     implicants.Add(i, impl);
-                    pdnf.Add(ImplicantsToString(arguments,'*'));
+                    pdnf.Add(ImplicantsToString(arguments, '*'));
                 }
                 else
                     pcnf.Add(ImplicantsToString(arguments, '+'));
                 arr[arr.Length - 1] = res;
                 PrintToTable(arr);
             }
-            string[] dual = new string[results.Count];
-            results.CopyTo(dual);
-            for (int i = 0; i < dual.Length; i++)
-            {
-                if (dual[i] == "0") dual[i] = "-1";
-                else if (dual[i] == "1") dual[i] = "0";
-            }
-            for (int i = 0; i < dual.Length; i++)
-                if (dual[i] == "-1") dual[i] = "1";
-            Array.Reverse(dual);
             string mdnf;
-            if (!results.Contains("0")) mdnf = "1";
-            else if (!results.Contains("1")) mdnf = "0";
+            if (!results.Contains(0)) mdnf = "1";
+            else if (!results.Contains(1)) mdnf = "0";
             else mdnf = booleanFunction.GetMDNF(implicants);
             other_results.Text = "";
             variables.RemoveAt(variables.Count - 1);
-            if (pdnf.Count != 0) other_results.Text += $"PDNF: f({String.Join(',', variables)})={String.Join('+',pdnf)}\r\n";
-            if (pcnf.Count != 0) other_results.Text += $"PCNF: f({String.Join(',', variables)})={String.Join("",pcnf)}\r\n";
+            string ZhegalkinPolynomial;
+            if (!results.Contains(0)) ZhegalkinPolynomial = "1";
+            else if (!results.Contains(1)) ZhegalkinPolynomial = "0";
+            else ZhegalkinPolynomial = booleanFunction.GetZhegalkinPolynomial(results, variables, binTable);
+            if (pdnf.Count != 0) other_results.Text += $"PDNF: f({String.Join(',', variables)})={String.Join('+', pdnf)}\r\n";
+            if (pcnf.Count != 0) other_results.Text += $"PCNF: f({String.Join(',', variables)})={String.Join("", pcnf)}\r\n";
             other_results.Text += $"MDNF: f({String.Join(',', variables)})={mdnf}\r\n";
-            other_results.Text += (results[results.Count - 1] == "1" ? "The function stores 1." : "The function does not store 1.") + "\r\n";
-            other_results.Text += (results[0] == "0" ? "The function stores 0." : "The function does not store 0.") + "\r\n";
-            other_results.Text += (results.SequenceEqual(dual) ? "The function is self-dual." : "The function is not self-dual.") + "\r\n";
+            other_results.Text += $"Zhegalkin polynomial: f({String.Join(',', variables)})={ZhegalkinPolynomial}\r\n";
+            other_results.Text += (results[results.Count - 1] == 1 ? "The function stores 1." : "The function does not store 1.") + "\r\n";
+            other_results.Text += (results[0] == 0 ? "The function stores 0." : "The function does not store 0.") + "\r\n";
+            other_results.Text += (booleanFunction.IsSelfDual(results) ? "The function is self-dual." : "The function is not self-dual.") + "\r\n";
             stopwatch.Stop();
             other_results.Text += $"Done in {stopwatch.Elapsed}\r\n";
         }
@@ -99,15 +97,15 @@ namespace BooleanFunctions
             {
                 res.Append("(");
                 for (int i = 0; i < arguments.Keys.Count; i++)
-                    res.Append((i == 0 ? "" : "+")+(arguments.ElementAt(i).Value == 1 ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i)));
+                    res.Append((i == 0 ? "" : "+") + (arguments.ElementAt(i).Value == 1 ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i)));
                 res.Append(")");
             }
             return res.ToString();
         }
-        private List<string> Variables()
+        private List<string> Variables(string str)
         {
             List<string> letters = new List<string>();
-            foreach (char c in ParseInputString()) if (Letter(c) && !letters.Contains(c.ToString())) letters.Add(c.ToString());
+            foreach (char c in str) if (Letter(c) && !letters.Contains(c.ToString())) letters.Add(c.ToString());
             letters.Sort();
             letters.Add("f()");
             return letters;
@@ -287,6 +285,52 @@ namespace BooleanFunctions
                 hooks--;
             }
             input.Text = str.ToString();
+        }
+
+        private void input_binary_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = !(e.KeyValue == 48 || e.KeyValue == 49 || e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back);
+        }
+
+        private void input_binary_TextChanged(object sender, EventArgs e)
+        {
+            enter_binary.Enabled = input_binary.Text != "";
+            int var_pow = 1;
+            while (input_binary.Text.Length > Math.Pow(2, var_pow))
+                var_pow++;
+            var_binary_label.Text = var_pow.ToString();
+        }
+        private string getFromBinary()
+        {
+            StringBuilder str = new StringBuilder();
+            str.Append(input_binary.Text);
+            int length = (int)Math.Pow(2, int.Parse(var_binary_label.Text));
+            while (str.Length < length)
+                str.Append("0");
+            char[] var_arr = new char[int.Parse(var_binary_label.Text)];
+            List<List<string>> binTable = binaryTable(var_arr.Length);
+            for (int i = 0; i < var_arr.Length; i++)
+                var_arr[i] = (char)(i + 97);
+            char[] implicants = str.ToString().ToCharArray();
+            List<string> res = new List<string>();
+
+            Dictionary<string, int> arguments = new Dictionary<string, int>();
+            for (int i = 0; i < binTable.ElementAt(0).Count; i++)
+            {
+                if (implicants[i] == '0') continue;
+                arguments.Clear();
+                for (int j = 0; j < var_arr.Length; j++)
+                {
+                    arguments.Add(var_arr[j].ToString(), int.Parse(binTable.ElementAt(binTable.Count - j - 1).ElementAt(i)));
+                }
+                res.Add(ImplicantsToString(arguments, '*'));
+            }
+            return String.Join('+', res);
+        }
+
+        private void enter_binary_Click(object sender, EventArgs e)
+        {
+            if(input_binary.Text != "") input.Text = getFromBinary();
         }
     }
 }
