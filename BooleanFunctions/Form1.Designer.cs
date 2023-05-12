@@ -165,6 +165,7 @@
             this.other_results.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.other_results.Size = new System.Drawing.Size(479, 597);
             this.other_results.TabIndex = 26;
+            this.other_results.WordWrap = false;
             // 
             // Form1
             // 
