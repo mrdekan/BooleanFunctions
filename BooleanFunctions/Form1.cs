@@ -11,6 +11,10 @@ namespace BooleanFunctions
         private const int MAX_RAND_ACTIONS = 15;
         private const int MAX_RAND_ARGS = 7;
         private const int MIN_RAND_ARGS = 3;
+        private const int PROBABILITY_OF_OPENING_TEMPLE = 3;
+        private const int PROBABILITY_OF_DENIAL = 4;
+        private const int PROBABILITY_OF_CLOSING_TEMPLE = 2;
+        private const int ASCII_LETTERS_START = 97;
         #endregion
         private BooleanFunction booleanFunction = new BooleanFunction();
         public Form1()
@@ -102,11 +106,10 @@ namespace BooleanFunctions
         public void PrintToTable(string[] arr)
         {
             int columns = 0;
-            while (table.Columns.Count < arr.Length)
+            for(; table.Columns.Count < arr.Length; columns++)
             {
                 table.Columns.Add("", "");
-                table.Columns[columns].Width = 24;
-                columns++;
+                table.Columns[columns].Width = 27;
             }
             table.Rows.Add(arr);
         }
@@ -234,23 +237,23 @@ namespace BooleanFunctions
             char[] arr = new char[random.Next(MIN_RAND_ARGS, MAX_RAND_ARGS)];
             string actions = "∨∧";
             int hooks = 0;
-            for (int i = 0; i < arr.Length; i++) arr[i] = (char)(i+97);
-            if (random.Next(4) == 0) str.Append('!');
+            for (int i = 0; i < arr.Length; i++) arr[i] = (char)(i + ASCII_LETTERS_START);
+            if (random.Next(PROBABILITY_OF_DENIAL) == 0) str.Append('!');
             str.Append(arr[random.Next(arr.Length)]);
             int actionsNumber = random.Next(2, MAX_RAND_ACTIONS);
             for (int i = 0; i < actionsNumber; i++)
             {
                 bool hookIsAvailable = true;
-                str.Append(actions[random.Next(2)]);
-                if (random.Next(3) == 0 && i != actionsNumber - 1)
+                str.Append(actions[random.Next(actions.Length)]);
+                if (random.Next(PROBABILITY_OF_OPENING_TEMPLE) == 0 && i != actionsNumber - 1)
                 {
                     str.Append('(');
                     hooks++;
                     hookIsAvailable = false;
                 }
-                if (random.Next(4) == 0) str.Append('!');
+                if (random.Next(PROBABILITY_OF_DENIAL) == 0) str.Append('!');
                 str.Append(arr[random.Next(arr.Length)]);
-                if (hooks > 0 && random.Next(2) == 0 && hookIsAvailable)
+                if (hooks > 0 && random.Next(PROBABILITY_OF_CLOSING_TEMPLE) == 0 && hookIsAvailable)
                 {
                     str.Append(')');
                     hooks--;
@@ -260,7 +263,7 @@ namespace BooleanFunctions
                 str.Append(')');
             input.Text = str.ToString();
         }
-        private void input_binary_KeyDown(object sender, KeyEventArgs e)
+        private void input_binary_KeyDown(object sender, KeyEventArgs e) //Allows only 0, 1, backspace and delete in input_binary
         {
             e.SuppressKeyPress = !(e.KeyValue == 48 || e.KeyValue == 49 || e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back);
         }
@@ -282,7 +285,7 @@ namespace BooleanFunctions
             char[] varArr = new char[int.Parse(var_binary_label.Text)];
             List<List<string>> binTable = binaryTable(varArr.Length);
             for (int i = 0; i < varArr.Length; i++)
-                varArr[i] = (char)(i + 97);
+                varArr[i] = (char)(i + ASCII_LETTERS_START);
             char[] implicants = str.ToString().ToCharArray();
             List<string> res = new List<string>();
             Dictionary<string, int> arguments = new Dictionary<string, int>();
