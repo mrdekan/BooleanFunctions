@@ -133,29 +133,29 @@ namespace BooleanFunctions
                     AfterMultiplying = new List<List<string>>();
                 }
                 char[] min = BeforeMultiplying[0][0].ToCharArray();
-                foreach (string s in BeforeMultiplying[0]) 
+                foreach (string s in BeforeMultiplying[0])
                     if (s.Length < min.Length) min = s.ToCharArray();
                 //char[] min = BeforeMultiplying[0].OrderBy(s => s.Length).FirstOrDefault().ToCharArray();
                 for (int i = 0; i < min.Length; i++)
                     core.Add(cycle.Xvalues[(int)min[i] - ASCII_LETTERS_START]);
             }
             List<string> MDNF = new List<string>();
-            foreach(var c in core)
+            foreach (var c in core)
             {
                 char[] temp = c.ToCharArray();
                 StringBuilder tempRes = new StringBuilder();
-                for(int i = 0; i < temp.Length; i++)
+                for (int i = 0; i < temp.Length; i++)
                     tempRes.Append(temp[i] == '-' ? "" : (temp[i] == '1' ? variables[i] : "!" + variables[i]));
                 MDNF.Add(tempRes.ToString());
             }
             #endregion
-            return String.Join('+',MDNF);
+            return String.Join('+', MDNF);
         }
         public bool IsSelfDual(List<int> implicants)
         {
             int[] dual = new int[implicants.Count];
             implicants.CopyTo(dual);
-            for (int i = 0; i < dual.Length; i++) dual[i] = (dual[i]-1)*-1;
+            for (int i = 0; i < dual.Length; i++) dual[i] = (dual[i] - 1) * -1;
             Array.Reverse(dual);
             return implicants.SequenceEqual(dual);
         }
@@ -173,18 +173,36 @@ namespace BooleanFunctions
                 leftElemsInTriangle.Add(implicants[0]);
             }
             List<string> res = new List<string>();
-            for(int i = 0; i < leftElemsInTriangle.Count; i++)
+            for (int i = 0; i < leftElemsInTriangle.Count; i++)
             {
                 if (leftElemsInTriangle[i] != 0)
                 {
                     StringBuilder tempStr = new StringBuilder();
-                    for(int j = binTable.Count-1; j >= 0; j--)
+                    for (int j = binTable.Count - 1; j >= 0; j--)
                         if (binTable[j][i] != "0") tempStr.Append(variables[binTable.Count - j - 1]);
                     if (tempStr.Length == 0) tempStr.Append("1"); //for 000..0 iteration
                     res.Add(tempStr.ToString());
                 }
             }
             return String.Join('⨁', res);
+        }
+        private int[] getImplicantsSet(List<List<string>> binTable, int pos)
+        {
+            int[] res = new int[binTable.Count];
+            for (int i = 0; i < res.Length; i++) res[i] = int.Parse(binTable[i][pos]);
+            return res;
+        }
+        private bool isLessThen(int[] a, int[] b)
+        {
+            for (int i = 0; i < a.Length; i++) if (a[i] > b[i]) return false;
+            return true;
+        }
+        public bool IsMonotone(List<int> results, List<List<string>> binTable)
+        {
+            for (int i = 0; i < results.Count-1; i++)
+                for (int j = i + 1; j < results.Count; j++)
+                    if (isLessThen(getImplicantsSet(binTable, i), getImplicantsSet(binTable, j)) && results[i] > results[j]) return false;
+            return true;
         }
     }
 }

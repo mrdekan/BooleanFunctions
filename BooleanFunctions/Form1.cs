@@ -82,7 +82,8 @@ namespace BooleanFunctions
             other_results.Text += $"Zhegalkin polynomial: f({String.Join(',', variables)})={ZhegalkinPolynomial}\r\n";
             other_results.Text += (results[results.Count - 1] == 1 ? "The function stores 1." : "The function does not store 1.") + "\r\n";
             other_results.Text += (results[0] == 0 ? "The function stores 0." : "The function does not store 0.") + "\r\n";
-            other_results.Text += (booleanFunction.IsSelfDual(results) ? "The function is self-dual." : "The function is not self-dual.") + "\r\n";
+            other_results.Text += (!results.Contains(0) || !results.Contains(1) || !booleanFunction.IsSelfDual(results) ? "The function is not self-dual." : "The function is self-dual.") + "\r\n";
+            other_results.Text += (!results.Contains(0) || !results.Contains(1) || booleanFunction.IsMonotone(results,binTable) ? "The function is monotone." : "The function is not monotone.") + "\r\n";
             stopwatch.Stop();
             other_results.Text += $"Done in {stopwatch.Elapsed}\r\n";
         }
