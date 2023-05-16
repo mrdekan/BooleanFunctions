@@ -24,15 +24,18 @@ namespace BooleanFunctions
             info.UseMnemonic = false;
             other_results.ReadOnly = true;
         }
-        //heavy test b∧(!d∧a∨d)∧a∧b∨f∨d∧t∧(g∨r)∨!e∨!o∧(f∨s∧!d)∨g∧c∨!c∧d∨z∨x∨y∧(!z∨!x)∨u
-        private void submit_Click(object sender, EventArgs e)
+		//heavy test
+		//b∧(!d∧a∨d)∧a∧b∨f∨d∧t∧(g∨r)∨!e∨!o∧(f∨s∧!d)∨g∧c∨!c∧d∨z∨x∨y∧(!z∨!x)∨u
+		//test from presentation
+		//!x!y!z!t+!x!y!zt+!x!yz!t+!x!yzt+!xy!zt+!xyzt+x!y!z!t+x!yz!t+xy!z!t+x!yzt+xy!zt
+		private void submit_Click(object sender, EventArgs e)
         {
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new();
             stopwatch.Start();
             List<string> variables = Variables(ParseInputString());
             List<List<string>> binTable = binaryTable(variables.Count - 1);
-            Dictionary<string, int> arguments = new Dictionary<string, int>();
-            Dictionary<int, string> implicants = new Dictionary<int, string>();
+            Dictionary<string, int> arguments = new();
+            Dictionary<int, string> implicants = new();
             string strInput = ToCorrectInput();
             if (strInput == "error") return;
             input.Text = strInput.Replace('+', '∨').Replace('*', '∧');
@@ -41,9 +44,9 @@ namespace BooleanFunctions
             table.Refresh();
             PrintToTable(variables.ToArray());
             string[] arr = new string[variables.Count()];
-            List<int> results = new List<int>();
-            List<string> pdnf = new List<string>();
-            List<string> pcnf = new List<string>();
+            List<int> results = new();
+            List<string> pdnf = new();
+            List<string> pcnf = new();
             for (int i = 0; i < binTable.ElementAt(0).Count; i++)
             {
                 arguments.Clear();
@@ -56,7 +59,7 @@ namespace BooleanFunctions
                 results.Add(int.Parse(res));
                 if (res == "1")
                 {
-                    StringBuilder impl = new StringBuilder();
+                    StringBuilder impl = new();
                     for (int j = 0; j < arr.Length - 1; j++) impl.Append(arr[j]);
                     implicants.Add(i, impl.ToString());
                     pdnf.Add(ImplicantsToString(arguments, 0));
@@ -90,15 +93,15 @@ namespace BooleanFunctions
         Func<char, bool> Letter = c => (c >= 97 && c <= 122);
         private string ImplicantsToString(Dictionary<string, int> arguments, int mode)
         {
-            StringBuilder res = new StringBuilder();
-                for (int i = 0; i < arguments.Keys.Count; i++)
-                    res.Append(((i == 0 || mode != 1) ? "" : "+") + (arguments.ElementAt(i).Value == mode ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i)));
-            if (mode == 1) return $"({res.ToString()})";
+            StringBuilder res = new();
+            for (int i = 0; i < arguments.Keys.Count; i++)
+                res.Append(((i == 0 || mode != 1) ? "" : "+") + (arguments.ElementAt(i).Value == mode ? $"!{arguments.Keys.ElementAt(i)}" : arguments.Keys.ElementAt(i)));
+            if (mode == 1) return $"({res})";
             return res.ToString();
         }
         private List<string> Variables(string str)
         {
-            List<string> letters = new List<string>();
+            List<string> letters = new();
             foreach (char c in str) if (Letter(c) && !letters.Contains(c.ToString())) letters.Add(c.ToString());
             letters.Sort();
             letters.Add("f()");
@@ -215,7 +218,7 @@ namespace BooleanFunctions
         #endregion
         private List<List<string>> binaryTable(int variables)
         {
-            List<List<string>> res = new List<List<string>>();
+            List<List<string>> res = new();
             for (int i = 0; i < variables; i++) //n змінних = n списки в списку
                                                 //(один вкладений список це стовпець з 0 та 1 під змінною в таблиці)
                                                 //і перший список це стовпець під останньою змінною
@@ -233,8 +236,8 @@ namespace BooleanFunctions
         }
         private void random_Click(object sender, EventArgs e)
         {
-            StringBuilder str = new StringBuilder();
-            Random random = new Random();
+            StringBuilder str = new();
+            Random random = new();
             char[] arr = new char[random.Next(MIN_RAND_ARGS, MAX_RAND_ARGS)];
             string actions = "∨∧";
             int hooks = 0;
@@ -272,24 +275,25 @@ namespace BooleanFunctions
         {
             enter_binary.Enabled = input_binary.Text != "";
             int var_pow = 1;
-            while (input_binary.Text.Length > Math.Pow(2, var_pow))
-                var_pow++;
+            while (input_binary.Text.Length > Math.Pow(2, var_pow)) var_pow++;
             var_binary_label.Text = var_pow.ToString();
-        }
+            variables_count_label.Text = var_pow == 1 ? "variable" : "variables";
+		}
         private string getFromBinary()
         {
-            StringBuilder str = new StringBuilder();
+            StringBuilder str = new();
             str.Append(input_binary.Text);
             int length = (int)Math.Pow(2, int.Parse(var_binary_label.Text));
             while (str.Length < length)
-                str.Append("0");
+                str.Append('0');
+            input_binary.Text = str.ToString();
             char[] varArr = new char[int.Parse(var_binary_label.Text)];
             List<List<string>> binTable = binaryTable(varArr.Length);
             for (int i = 0; i < varArr.Length; i++)
                 varArr[i] = (char)(i + ASCII_LETTERS_START);
             char[] implicants = str.ToString().ToCharArray();
-            List<string> res = new List<string>();
-            Dictionary<string, int> arguments = new Dictionary<string, int>();
+            List<string> res = new();
+            Dictionary<string, int> arguments = new();
             for (int i = 0; i < binTable.ElementAt(0).Count; i++)
             {
                 if (implicants[i] == '0') continue;

@@ -40,6 +40,7 @@
 			this.input_binary = new System.Windows.Forms.TextBox();
 			this.var_binary_label = new System.Windows.Forms.Label();
 			this.enter_binary = new System.Windows.Forms.Button();
+			this.variables_count_label = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.table)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -179,11 +180,12 @@
 			// var_binary_label
 			// 
 			this.var_binary_label.AutoSize = true;
-			this.var_binary_label.Location = new System.Drawing.Point(650, 44);
+			this.var_binary_label.Location = new System.Drawing.Point(650, 46);
 			this.var_binary_label.Name = "var_binary_label";
 			this.var_binary_label.Size = new System.Drawing.Size(13, 15);
 			this.var_binary_label.TabIndex = 28;
 			this.var_binary_label.Text = "1";
+			this.var_binary_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// enter_binary
 			// 
@@ -201,11 +203,21 @@
 			this.enter_binary.UseVisualStyleBackColor = false;
 			this.enter_binary.Click += new System.EventHandler(this.enter_binary_Click);
 			// 
+			// variables_count_label
+			// 
+			this.variables_count_label.AutoSize = true;
+			this.variables_count_label.Location = new System.Drawing.Point(660, 46);
+			this.variables_count_label.Name = "variables_count_label";
+			this.variables_count_label.Size = new System.Drawing.Size(48, 15);
+			this.variables_count_label.TabIndex = 30;
+			this.variables_count_label.Text = "variable";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1216, 559);
+			this.Controls.Add(this.variables_count_label);
 			this.Controls.Add(this.enter_binary);
 			this.Controls.Add(this.var_binary_label);
 			this.Controls.Add(this.input_binary);
@@ -240,5 +252,6 @@
         private TextBox input_binary;
         private Label var_binary_label;
         private Button enter_binary;
-    }
+		private Label variables_count_label;
+	}
 }

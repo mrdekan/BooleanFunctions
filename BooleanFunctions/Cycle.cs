@@ -5,17 +5,17 @@ namespace BooleanFunctions
 	internal class Cycle
 	{
 		#region Variables
-		private List<List<RowInCyclesSection>> CycleList = new List<List<RowInCyclesSection>>();
-		private List<List<RowInCyclesSection>> NextCycleList = new List<List<RowInCyclesSection>>();
-		public List<string> Xvalues = new List<string>();
-		public List<string> Implicants = new List<string>();
+		private List<List<RowInCyclesSection>> CycleList = new();
+		private List<List<RowInCyclesSection>> NextCycleList = new();
+		public List<string> Xvalues = new();
+		public List<string> Implicants = new();
 		public bool LastCycle { get; private set; }
 		#endregion
 		#region McCluskey method
 		private int CheckDifference(string a, string b, ref string res)
 		{
 			int symbols = 0;
-			StringBuilder str = new StringBuilder();
+			StringBuilder str = new();
 			for (int i = 0; i < a.Length; i++)
 			{
 				if (a[i] != b[i])
@@ -108,7 +108,7 @@ namespace BooleanFunctions
 		public List<string> GetCore()
 		{
 			bool[,] matrix = GetMatrix();
-			List<string> res = new List<string>();
+			List<string> res = new();
 			for (int x = 0; x < matrix.GetLength(0); x++)
 			{
 				int count = 0, pos = 0;

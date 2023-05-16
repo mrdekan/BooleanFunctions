@@ -60,13 +60,11 @@ namespace BooleanFunctions
             }
             return str.ToString();
         }
-        #endregion
-        //test from presentation
-        //!a!b!c!d+!a!b!cd+!a!bc!d+!a!bcd+!ab!cd+!abcd+a!b!c!d+a!bc!d+ab!c!d+a!bcd+ab!cd
-        public string GetMDNF(Dictionary<int, string> implicants)
+		#endregion
+		public string GetMDNF(Dictionary<int, string> implicants)
         {
             #region Calculating cycles
-            Cycle cycle = new Cycle();
+            Cycle cycle = new();
             cycle.SetFromImplicants(implicants);
             while (!cycle.LastCycle)
                 cycle.ToNextCycle();
@@ -74,8 +72,8 @@ namespace BooleanFunctions
             bool[,] matrix = cycle.GetMatrix();
             #endregion
             #region Finding indexes of core
-            List<int> coreIndexes = new List<int>();
-            List<int> coreCover = new List<int>();
+            List<int> coreIndexes = new();
+            List<int> coreCover = new();
             foreach (string index in core)
             {
                 int temp = cycle.Xvalues.IndexOf(index);
@@ -106,8 +104,8 @@ namespace BooleanFunctions
             #region Petrick's method
             if (newMatrix.GetLength(0) != 0)
             {
-                List<List<string>> BeforeMultiplying = new List<List<string>>();
-                List<List<string>> AfterMultiplying = new List<List<string>>();
+                List<List<string>> BeforeMultiplying = new();
+                List<List<string>> AfterMultiplying = new();
                 for (int x = 0; x < newMatrix.GetLength(0); x++)
                 {
                     BeforeMultiplying.Add(new List<string>());
@@ -137,9 +135,9 @@ namespace BooleanFunctions
                     if (s.Length < min.Length) min = s.ToCharArray();
                 //char[] min = BeforeMultiplying[0].OrderBy(s => s.Length).FirstOrDefault().ToCharArray();
                 for (int i = 0; i < min.Length; i++)
-                    core.Add(cycle.Xvalues[(int)min[i] - ASCII_LETTERS_START]);
+                    core.Add(cycle.Xvalues[min[i] - ASCII_LETTERS_START]);
             }
-            List<string> MDNF = new List<string>();
+            List<string> MDNF = new();
             foreach (var c in core)
             {
                 char[] temp = c.ToCharArray();
@@ -151,36 +149,35 @@ namespace BooleanFunctions
             #endregion
             return String.Join('+', MDNF);
         }
-        public bool IsSelfDual(List<int> implicants)
+        public bool IsSelfDual(List<int> results)
         {
-            int[] dual = new int[implicants.Count];
-            implicants.CopyTo(dual);
-            for (int i = 0; i < dual.Length; i++) dual[i] = (dual[i] - 1) * -1;
+            int[] dual = new int[results.Count];
+			results.CopyTo(dual);
+            for (int i = 0; i < dual.Length; i++) dual[i] = 1 - dual[i];
             Array.Reverse(dual);
-            return implicants.SequenceEqual(dual);
+            return results.SequenceEqual(dual);
         }
-        public string GetZhegalkinPolynomial(List<int> implicants, List<string> variables, List<List<string>> binTable)
+        public string GetZhegalkinPolynomial(List<int> results, List<string> variables, List<List<string>> binTable)
         {
-            List<int> temp = new List<int>();
-            List<int> leftElemsInTriangle = new List<int>();
-            leftElemsInTriangle.Add(implicants[0]);
-            while (implicants.Count > 1)
+            List<int> temp = new();
+			List<int> leftElemsInTriangle = new List<int>{results[0]};
+			while (results.Count > 1)
             {
-                for (int i = 0; i < implicants.Count - 1; i++)
-                    temp.Add((implicants[i] + implicants[i + 1]) % 2);
-                implicants = temp;
+                for (int i = 0; i < results.Count - 1; i++)
+                    temp.Add((results[i] + results[i + 1]) % 2);
+				results = temp;
                 temp = new List<int>();
-                leftElemsInTriangle.Add(implicants[0]);
+                leftElemsInTriangle.Add(results[0]);
             }
-            List<string> res = new List<string>();
+            List<string> res = new();
             for (int i = 0; i < leftElemsInTriangle.Count; i++)
             {
                 if (leftElemsInTriangle[i] != 0)
                 {
-                    StringBuilder tempStr = new StringBuilder();
+                    StringBuilder tempStr = new();
                     for (int j = binTable.Count - 1; j >= 0; j--)
                         if (binTable[j][i] != "0") tempStr.Append(variables[binTable.Count - j - 1]);
-                    if (tempStr.Length == 0) tempStr.Append("1"); //for 000..0 iteration
+                    if (tempStr.Length == 0) tempStr.Append('1'); //for 000..0 iteration
                     res.Add(tempStr.ToString());
                 }
             }
@@ -192,7 +189,7 @@ namespace BooleanFunctions
             for (int i = 0; i < res.Length; i++) res[i] = int.Parse(binTable[i][pos]);
             return res;
         }
-        private bool isLessThen(int[] a, int[] b)
+        private bool isLessThan(int[] a, int[] b)
         {
             for (int i = 0; i < a.Length; i++) if (a[i] > b[i]) return false;
             return true;
@@ -201,7 +198,7 @@ namespace BooleanFunctions
         {
             for (int i = 0; i < results.Count-1; i++)
                 for (int j = i + 1; j < results.Count; j++)
-                    if (isLessThen(getImplicantsSet(binTable, i), getImplicantsSet(binTable, j)) && results[i] > results[j]) return false;
+                    if (results[i] > results[j] && isLessThan(getImplicantsSet(binTable, i), getImplicantsSet(binTable, j))) return false;
             return true;
         }
     }
