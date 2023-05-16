@@ -33,8 +33,8 @@ namespace BooleanFunctions
 		{
 			for (int i = 0; i < CycleList.Count; i++)
 				for (int j = 0; j < CycleList[i].Count; j++)
-					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(new string(CycleList[i][j].impl)))
-						Xvalues.Add(new string(CycleList[i][j].impl));
+					if (CycleList[i][j].type == 'X' && !Xvalues.Contains(CycleList[i][j].impl))
+						Xvalues.Add(CycleList[i][j].impl);
 		}
 		public void SetFromImplicants(Dictionary<int, string> implicants)
 		{
@@ -53,22 +53,13 @@ namespace BooleanFunctions
 							CycleList.Add(new List<RowInCyclesSection>());
 							secpos++;
 						}
-						CycleList.ElementAt(secpos - 1).Add(new RowInCyclesSection
-						{
-							impl = implicants[implicant],
-							type = 'X'
-						});
+						CycleList.ElementAt(secpos - 1).Add(new RowInCyclesSection(implicants[implicant]));
 						numOfElems--;
 						pos++;
 					}
 				}
 				section++;
 			}
-		}
-		private bool ContainsInList(List<RowInCyclesSection> list, string key)
-		{
-			for (int i = 0; i < list.Count; i++) if (list[i].impl == key) return true;
-			return false;
 		}
 		public void ToNextCycle()
 		{
@@ -87,12 +78,8 @@ namespace BooleanFunctions
 							ok = true;
 							CycleList[i][j].type = 'V';
 							CycleList[i + 1][k].type = 'V';
-							if (!ContainsInList(NextCycleList.ElementAt(i), temp))
-								NextCycleList.ElementAt(i).Add(new RowInCyclesSection
-								{
-									impl = temp,
-									type = 'X'
-								});
+							if (NextCycleList[i].Count(el => el.impl == temp) == 0)
+								NextCycleList[i].Add(new RowInCyclesSection(temp));
 						}
 					}
 				}
@@ -107,10 +94,7 @@ namespace BooleanFunctions
         private bool ImplicantAndXvalue(string a, string b)
         {
 			for(int i = 0; i < a.Length; i++)
-            {
-				if (a[i] == '-') continue;
-				if (a[i] != b[i]) return false;
-            }
+				if (a[i] != '-' && a[i] != b[i]) return false;
 			return true;
         }
 		public bool[,] GetMatrix()

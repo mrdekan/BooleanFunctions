@@ -87,7 +87,7 @@ namespace BooleanFunctions
             stopwatch.Stop();
             other_results.Text += $"Done in {stopwatch.Elapsed}\r\n";
         }
-        Func<char, bool> Letter = c => ((int)c >= 97 && (int)c <= 122);
+        Func<char, bool> Letter = c => (c >= 97 && c <= 122);
         private string ImplicantsToString(Dictionary<string, int> arguments, int mode)
         {
             StringBuilder res = new StringBuilder();
