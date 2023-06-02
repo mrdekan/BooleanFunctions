@@ -95,14 +95,10 @@ namespace BooleanFunctions
                 if (!results.Contains(0)) Results.MDNF = "1";
                 else if (!results.Contains(1)) Results.MDNF = "doesn't exist";
                 else Results.MDNF = booleanFunction.GetMDNF(implicants);
-                if (other_results.InvokeRequired)
+                Invoke((MethodInvoker)(() =>
                 {
-                    other_results.Invoke(() =>
-                    {
-                        other_results.Text = Results.GetString();
-                    });
-                }
-                else other_results.Text = Results.GetString();
+                    other_results.Text = Results.GetString();
+                }));
             });
         }
         async void GetZhegalkin(List<int> results, List<string> variables, List<List<string>> binTable)
@@ -112,14 +108,10 @@ namespace BooleanFunctions
                 if (!results.Contains(0)) Results.Zhegalkin = "1";
                 else if (!results.Contains(1)) Results.Zhegalkin = "0";
                 else Results.Zhegalkin = booleanFunction.GetZhegalkinPolynomial(results, variables, binTable);
-                if (other_results.InvokeRequired)
+                Invoke((MethodInvoker)(() =>
                 {
-                    other_results.Invoke(() =>
-                    {
-                        other_results.Text = Results.GetString();
-                    });
-                }
-                else other_results.Text = Results.GetString();
+                    other_results.Text = Results.GetString();
+                }));
             });
         }
         Func<char, bool> Letter = c => (c >= 97 && c <= 122);
@@ -147,26 +139,16 @@ namespace BooleanFunctions
                 {
                     for (int columns = 0; table.Columns.Count < arr2.Length; columns++)
                     {
-                        if (table.InvokeRequired)
-                        {
-                            table.Invoke(() =>
-                            {
-                                table.Columns.Add("", "");
-                                table.Columns[columns].Width = 27;
-                            });
-                        }
-                        else
+                        Invoke((MethodInvoker)(() =>
                         {
                             table.Columns.Add("", "");
                             table.Columns[columns].Width = 27;
-                        }
+                        }));
                     }
-                    if (table.InvokeRequired)
-                        table.Invoke(() =>
-                        {
-                            table.Rows.Add(arr2);
-                        });
-                    else table.Rows.Add(arr2);
+                    Invoke((MethodInvoker)(() =>
+                    {
+                        table.Rows.Add(arr2);
+                    }));
                 }
             });
         }
