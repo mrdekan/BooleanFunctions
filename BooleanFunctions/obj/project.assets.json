@@ -8,7 +8,7 @@
     "net6.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Professional\\.nuget\\packages\\": {},
+    "C:\\Users\\dekan\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
@@ -17,14 +17,14 @@
       "projectUniqueName": "F:\\code\\C#\\BooleanFunctions\\BooleanFunctions\\BooleanFunctions.csproj",
       "projectName": "BooleanFunctions",
       "projectPath": "F:\\code\\C#\\BooleanFunctions\\BooleanFunctions\\BooleanFunctions.csproj",
-      "packagesPath": "C:\\Users\\Professional\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\dekan\\.nuget\\packages\\",
       "outputPath": "F:\\code\\C#\\BooleanFunctions\\BooleanFunctions\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Professional\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\dekan\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -69,7 +69,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   }

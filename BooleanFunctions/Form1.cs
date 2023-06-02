@@ -24,11 +24,11 @@ namespace BooleanFunctions
             info.UseMnemonic = false;
             other_results.ReadOnly = true;
         }
-		//heavy test
-		//b∧(!d∧a∨d)∧a∧b∨f∨d∧t∧(g∨r)∨!e∨!o∧(f∨s∧!d)∨g∧c∨!c∧d∨z∨x∨y∧(!z∨!x)∨u
-		//test from presentation
-		//!x!y!z!t+!x!y!zt+!x!yz!t+!x!yzt+!xy!zt+!xyzt+x!y!z!t+x!yz!t+xy!z!t+x!yzt+xy!zt
-		private void submit_Click(object sender, EventArgs e)
+        //heavy test
+        //b∧(!d∧a∨d)∧a∧b∨f∨d∧t∧(g∨r)∨!e∨!o∧(f∨s∧!d)∨g∧c∨!c∧d∨z∨x∨y∧(!z∨!x)∨u
+        //test from presentation
+        //!x!y!z!t+!x!y!zt+!x!yz!t+!x!yzt+!xy!zt+!xyzt+x!y!z!t+x!yz!t+xy!z!t+x!yzt+xy!zt
+        private void submit_Click(object sender, EventArgs e)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
@@ -42,7 +42,8 @@ namespace BooleanFunctions
             table.Rows.Clear();
             table.Columns.Clear();
             table.Refresh();
-            PrintToTable(variables.ToArray());
+            List<string[]> fullTable = new();
+            fullTable.Add(variables.ToArray());
             string[] arr = new string[variables.Count()];
             List<int> results = new();
             List<string> pdnf = new();
@@ -67,28 +68,59 @@ namespace BooleanFunctions
                 else
                     pcnf.Add(ImplicantsToString(arguments, 1));
                 arr[arr.Length - 1] = res;
-                PrintToTable(arr);
+                string[] arrCopy = new string[arr.Length];
+                arr.CopyTo(arrCopy, 0);
+                fullTable.Add(arrCopy);
             }
+            PrintTable(fullTable);
             other_results.Text = "";
+            Results.ClearFields();
             variables.RemoveAt(variables.Count - 1);
-            string mdnf;
-            if (!results.Contains(0)) mdnf = "1";
-            else if (!results.Contains(1)) mdnf = "doesn't exist";
-            else mdnf = booleanFunction.GetMDNF(implicants);
-            string ZhegalkinPolynomial;
-            if (!results.Contains(0)) ZhegalkinPolynomial = "1";
-            else if (!results.Contains(1)) ZhegalkinPolynomial = "0";
-            else ZhegalkinPolynomial = booleanFunction.GetZhegalkinPolynomial(results, variables, binTable);
-            if (pdnf.Count != 0) other_results.Text += $"PDNF: f({String.Join(',', variables)})={String.Join('+', pdnf)}\r\n";
-            if (pcnf.Count != 0) other_results.Text += $"PCNF: f({String.Join(',', variables)})={String.Join("", pcnf)}\r\n";
-            other_results.Text += $"MDNF: f({String.Join(',', variables)})={mdnf}\r\n";
-            other_results.Text += $"Zhegalkin polynomial: f({String.Join(',', variables)})={ZhegalkinPolynomial}\r\n";
-            other_results.Text += (results[results.Count - 1] == 1 ? "The function stores 1." : "The function does not store 1.") + "\r\n";
-            other_results.Text += (results[0] == 0 ? "The function stores 0." : "The function does not store 0.") + "\r\n";
-            other_results.Text += (!results.Contains(0) || !results.Contains(1) || !booleanFunction.IsSelfDual(results) ? "The function is not self-dual." : "The function is self-dual.") + "\r\n";
-            other_results.Text += (!results.Contains(0) || !results.Contains(1) || booleanFunction.IsMonotone(results,binTable) ? "The function is monotone." : "The function is not monotone.") + "\r\n";
+            if (pdnf.Count != 0) Results.PDNF = $"f({String.Join(',', variables)})={String.Join('+', pdnf)}";
+            if (pcnf.Count != 0) Results.PCNF = $"f({String.Join(',', variables)})={String.Join("", pcnf)}";
+            FindMDNF(implicants, results);
+            GetZhegalkin(results, variables, binTable);
+            Results.StoreOne = results[results.Count - 1] == 1;
+            Results.StoreZero = results[0] == 0;
+            Results.SelfDual = !results.Contains(0) || !results.Contains(1) || !booleanFunction.IsSelfDual(results);
+            Results.Monotone = !results.Contains(0) || !results.Contains(1) || booleanFunction.IsMonotone(results, binTable);
             stopwatch.Stop();
-            other_results.Text += $"Done in {stopwatch.Elapsed}\r\n";
+            Results.Elapsed = $"Done in {stopwatch.Elapsed}";
+            other_results.Text = Results.GetString();
+        }
+        async void FindMDNF(Dictionary<int, string> implicants, List<int> results)
+        {
+            await Task.Run(() =>
+            {
+                if (!results.Contains(0)) Results.MDNF = "1";
+                else if (!results.Contains(1)) Results.MDNF = "doesn't exist";
+                else Results.MDNF = booleanFunction.GetMDNF(implicants);
+                if (other_results.InvokeRequired)
+                {
+                    other_results.Invoke(() =>
+                    {
+                        other_results.Text = Results.GetString();
+                    });
+                }
+                else other_results.Text = Results.GetString();
+            });
+        }
+        async void GetZhegalkin(List<int> results, List<string> variables, List<List<string>> binTable)
+        {
+            await Task.Run(() =>
+            {
+                if (!results.Contains(0)) Results.Zhegalkin = "1";
+                else if (!results.Contains(1)) Results.Zhegalkin = "0";
+                else Results.Zhegalkin = booleanFunction.GetZhegalkinPolynomial(results, variables, binTable);
+                if (other_results.InvokeRequired)
+                {
+                    other_results.Invoke(() =>
+                    {
+                        other_results.Text = Results.GetString();
+                    });
+                }
+                else other_results.Text = Results.GetString();
+            });
         }
         Func<char, bool> Letter = c => (c >= 97 && c <= 122);
         private string ImplicantsToString(Dictionary<string, int> arguments, int mode)
@@ -107,15 +139,36 @@ namespace BooleanFunctions
             letters.Add("f()");
             return letters;
         }
-        public void PrintToTable(string[] arr)
+        async public void PrintTable(List<string[]> arr)
         {
-            int columns = 0;
-            for(; table.Columns.Count < arr.Length; columns++)
+            await Task.Run(() =>
             {
-                table.Columns.Add("", "");
-                table.Columns[columns].Width = 27;
-            }
-            table.Rows.Add(arr);
+                foreach (string[] arr2 in arr)
+                {
+                    for (int columns = 0; table.Columns.Count < arr2.Length; columns++)
+                    {
+                        if (table.InvokeRequired)
+                        {
+                            table.Invoke(() =>
+                            {
+                                table.Columns.Add("", "");
+                                table.Columns[columns].Width = 27;
+                            });
+                        }
+                        else
+                        {
+                            table.Columns.Add("", "");
+                            table.Columns[columns].Width = 27;
+                        }
+                    }
+                    if (table.InvokeRequired)
+                        table.Invoke(() =>
+                        {
+                            table.Rows.Add(arr2);
+                        });
+                    else table.Rows.Add(arr2);
+                }
+            });
         }
         #region Working with input
         private string ToCorrectInput()
@@ -127,9 +180,9 @@ namespace BooleanFunctions
                 .Replace('|', '+');
             int templesBefore = 0, templesAfter = 0;
             CheckTemples(strInput, ref templesBefore, ref templesAfter);
-            for(;templesBefore > 0; templesBefore--)
+            for (; templesBefore > 0; templesBefore--)
                 strInput = "(" + strInput;
-            for(;templesAfter > 0; templesAfter--)
+            for (; templesAfter > 0; templesAfter--)
                 strInput += ")";
             while (strInput.Contains("()")) strInput = strInput.Replace("()", "");
             for (int i = 0; i < strInput.Length - 1; i++)
@@ -263,7 +316,7 @@ namespace BooleanFunctions
                     hooks--;
                 }
             }
-            for(; hooks > 0; hooks--)
+            for (; hooks > 0; hooks--)
                 str.Append(')');
             input.Text = str.ToString();
         }
@@ -278,7 +331,7 @@ namespace BooleanFunctions
             while (input_binary.Text.Length > Math.Pow(2, var_pow)) var_pow++;
             var_binary_label.Text = var_pow.ToString();
             variables_count_label.Text = var_pow == 1 ? "variable" : "variables";
-		}
+        }
         private string getFromBinary()
         {
             StringBuilder str = new();
@@ -306,7 +359,7 @@ namespace BooleanFunctions
         }
         private void enter_binary_Click(object sender, EventArgs e)
         {
-            if(input_binary.Text != "") input.Text = getFromBinary();
+            if (input_binary.Text != "") input.Text = getFromBinary();
         }
     }
 }

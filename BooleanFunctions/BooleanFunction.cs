@@ -13,9 +13,7 @@ namespace BooleanFunctions
         {
             variables.Clear();
             foreach (var variable in arguments.Keys)
-            {
                 variables.Add(variable.ToString());
-            }
             while (value.Contains('('))
             {
                 int pos = value.IndexOf('(');
@@ -133,7 +131,6 @@ namespace BooleanFunctions
                 char[] min = BeforeMultiplying[0][0].ToCharArray();
                 foreach (string s in BeforeMultiplying[0])
                     if (s.Length < min.Length) min = s.ToCharArray();
-                //char[] min = BeforeMultiplying[0].OrderBy(s => s.Length).FirstOrDefault().ToCharArray();
                 for (int i = 0; i < min.Length; i++)
                     core.Add(cycle.Xvalues[min[i] - ASCII_LETTERS_START]);
             }
